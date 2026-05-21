@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow border-danger">
+            <div class="card-header bg-danger text-white text-center py-3">
+                <h4 class="mb-0">⚠️ ACİL DURUM BİLDİRİMİ</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-danger text-center mb-4 fw-bold">Lütfen sadece gerçek acil durumlarda kullanın!</p>
+                <form action="" method="post" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-4">
+                        {{ form.alarm_turu.label(class="form-label fw-bold") }}
+                        {{ form.alarm_turu(class="form-select form-select-lg") }}
+                        {% for error in form.alarm_turu.errors %}
+                        <div class="text-danger mt-1 small">{{ error }}</div>
+                        {% endfor %}
+                        <div class="form-text mt-2">Bu bildirim anında merkeze iletilecektir.</div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-danger btn-lg fw-bold") }}
+                        <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">İptal Et</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow border-0">
+            <div class="card-header bg-success text-white text-center py-3">
+                <h4 class="mb-0">Şoför Profili Oluştur</h4>
+            </div>
+            <div class="card-body p-4">
+                <p class="text-muted text-center mb-4">Sistemi kullanabilmek için lütfen kimlik bilgilerinizi doğrulayın.</p>
+                <form action="" method="post" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.ad_soyad.label(class="form-label fw-bold") }}
+                        {{ form.ad_soyad(class="form-control form-control-lg", placeholder="Örn: Ahmet Yılmaz") }}
+                        {% for error in form.ad_soyad.errors %}
+                        <div class="text-danger mt-1 small"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-4">
+                        {{ form.tc_kimlik.label(class="form-label fw-bold") }}
+                        {{ form.tc_kimlik(class="form-control form-control-lg", placeholder="11 Haneli TC Kimlik") }}
+                        {% for error in form.tc_kimlik.errors %}
+                        <div class="text-danger mt-1 small"><i class="bi bi-exclamation-circle"></i> {{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="d-grid gap-2">
+                        {{ form.submit(class="btn btn-success btn-lg") }}
+                        <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary">İptal Et ve Geri Dön</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
