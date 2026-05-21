@@ -21,5 +21,8 @@ def create_app(config_class=Config):
 
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    
+    # Modelleri kayıt et
+    from app import models
 
     return app
