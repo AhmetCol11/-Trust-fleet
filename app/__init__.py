@@ -15,6 +15,9 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
+    login.login_view = 'auth.login'
+    login.login_message = "Lütfen bu sayfaya erişmek için giriş yapın."
+    login.login_message_category = "warning"
 
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
