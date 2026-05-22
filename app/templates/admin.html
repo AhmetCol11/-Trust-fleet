@@ -143,4 +143,64 @@
         </div>
     </div>
 </div>
+
+<div class="row mt-4">
+    <div class="col-12 mb-4">
+        <div class="streamlit-container mt-0">
+            <h4 class="text-info fw-bold mb-4"><i class="fa-solid fa-clock-rotate-left"></i> Şoför Vardiya Ses Doğrulama & Yorgunluk Analizleri</h4>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Şoför / Plaka</th>
+                            <th>Başlangıç Beyanı</th>
+                            <th>Kapanış Beyanı</th>
+                            <th>Yorgunluk Durumu</th>
+                            <th>Karşılaştırmalı Detay Analizi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vk in vardiya_kayitlari %}
+                        <tr>
+                            <td><small class="text-secondary"><i class="fa-solid fa-calendar-day"></i> {{ vk.tarih_saat }}</small></td>
+                            <td>
+                                <span class="fw-bold text-light">{{ vk.sofor.ad }} {{ vk.sofor.soyad }}</span>
+                                <br>
+                                <span class="badge bg-secondary mt-1">{{ vk.sofor.arac_plaka }}</span>
+                            </td>
+                            <td>
+                                <div class="text-wrap small text-light opacity-75" style="max-width: 200px;">
+                                    <i>"{{ vk.baslangic_metni or 'Kayıt bulunamadı' }}"</i>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-wrap small text-light opacity-75" style="max-width: 200px;">
+                                    <i>"{{ vk.bitis_metni or 'Devam ediyor...' }}"</i>
+                                </div>
+                            </td>
+                            <td>
+                                {% if 'NORMAL' in vk.analiz_sonucu or 'DİNÇ' in vk.analiz_sonucu or 'İyi' in vk.analiz_sonucu %}
+                                    <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-3 py-2 fw-bold"><i class="fa-solid fa-circle-check"></i> {{ vk.analiz_sonucu }}</span>
+                                {% elif 'YORGUN' in vk.analiz_sonucu or 'RİSK' in vk.analiz_sonucu or 'Kötü' in vk.analiz_sonucu %}
+                                    <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 px-3 py-2 fw-bold"><i class="fa-solid fa-triangle-exclamation"></i> {{ vk.analiz_sonucu }}</span>
+                                {% else %}
+                                    <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-50 px-3 py-2 fw-bold"><i class="fa-solid fa-circle-question"></i> {{ vk.analiz_sonucu }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="p-2 rounded bg-dark border border-secondary small text-light" style="max-width: 400px; font-family: monospace; font-size: 0.85rem; line-height: 1.4;">
+                                    {{ vk.analiz_detay | safe if vk.analiz_detay else 'Devam eden vardiya için henüz karşılaştırmalı kapanış analizi yapılmadı.' }}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-center text-muted">Kayıtlı vardiya ses analizi bulunmuyor.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
