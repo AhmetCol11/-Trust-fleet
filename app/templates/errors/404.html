@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="streamlit-container mt-5 text-center">
+    <div class="py-5">
+        <i class="fa-solid fa-compass-slash fa-6x text-warning mb-4"></i>
+        <h1 class="display-3 fw-bold text-light">404</h1>
+        <h3 class="mb-4 text-secondary">Aradığınız Sayfa Bulunamadı</h3>
+        <p class="text-muted fs-5 mb-5 mx-auto" style="max-width: 500px;">
+            Girdiğiniz adres yanlış olabilir ya da bu sayfa artık mevcut değil. 
+            Lütfen bağlantıyı kontrol edin veya ana sayfaya dönün.
+        </p>
+        <div class="stButton d-inline-block" style="min-width: 200px;">
+            <a href="{{ url_for('main.index') }}" class="btn py-2 fw-bold text-white" style="border: 1px solid #ff4b4b; background-color: #ff4b4b; text-decoration: none; display: block; border-radius: 4px;">
+                <i class="fa-solid fa-home"></i> Ana Sayfaya Dön
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
