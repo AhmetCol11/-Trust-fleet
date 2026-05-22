@@ -15,7 +15,11 @@ def yorgunluk_analiz_et(metin):
     yorgunluk_kelimeleri = ["yoruldum", "yorgun", "bitik", "halsiz", "uykusuz", "uyku", "uyuyakaldım", "kötüyüm", "halsizim", "bitkinim", "uykum", "zor", "ağrıyor"]
     
     # Negatif / Olumlu belirteçler (Aynı cümlede geçiyorsa riski temizler)
-    negasyonlar = ["değil", "değilim", "yok", "iyiyim", "iyi", "dinç", "sorunsuz", "sıkıntı yok", "sorun yok", "güzel"]
+    negasyonlar = [
+        "değil", "değilim", "yok", "iyiyim", "iyi", "dinç", 
+        "sorunsuz", "sıkıntı yok", "sorun yok", "güzel", 
+        "yaşamadım", "hissetmiyorum", "olmadı", "yoktur", "değildir"
+    ]
     
     # Metni cümle veya ifadelere ayıralım
     cumleler = [c.strip() for c in metin_lower.replace('|', '.').replace(',', '.').split('.') if c.strip()]
@@ -87,10 +91,10 @@ def analiz_ve_karsilastirma_yap(sofor_id, baslangic, bitis):
         detaylar.append("\n📊 <b>Önceki Günler ile Karşılaştırma Raporu:</b>")
         detaylar.append(f"• Dünkü Vardiya Sonu Söz Raporu: <i>\"{onceki_bitis}\"</i> ({onceki_bit_kelime} kelime)")
         
-        if bit_kelime < onceki_bit_kelime * 0.7:
-            detaylar.append("📉 <b>Konuşma Hızı Düşüşü:</b> Şoförün konuşma uzunluğu bir önceki güne kıyasla %30'dan fazla azalmış. Enerji düşüklüğü ve uykusuzluk riski barizdir.")
+        if onceki_bit_kelime >= 15 and bit_kelime < onceki_bit_kelime * 0.5:
+            detaylar.append("📉 <b>Konuşma Hızı Düşüşü:</b> Şoförün konuşma uzunluğu bir önceki güne kıyasla %50'den fazla azalmış. Enerji düşüklüğü ve uykusuzluk riski barizdir.")
             durum = "KÖTÜ"
-        elif bit_kelime > onceki_bit_kelime * 1.3:
+        elif onceki_bit_kelime >= 15 and bit_kelime > onceki_bit_kelime * 1.3:
             detaylar.append("📈 <b>Konuşma Artışı:</b> Şoförün konuşma akıcılığı ve uzunluğu dünden daha fazla. Şoför dinç görünüyor.")
         else:
             detaylar.append("🔄 <b>Stabil Durum:</b> Şoförün konuşma uzunluğu ve kelime ritmi düne kıyasla paralel seyrediyor. Ciddi bir yorgunluk değişimi gözlemlenmedi.")
