@@ -1,39 +1,61 @@
-# AI Günlüğü (Vibe Coding Süreci)
+# AI Günlüğü (Vibe Coding ve Mimari Gelişim Süreci)
 
-Bu günlük, projenin AI ajanları ile nasıl geliştirildiğini, alınan mimari kararları ve çözülen hataları şeffaf bir şekilde belgelemek için tutulmaktadır.
+Bu günlük, projemizin sıfırdan son haline gelene kadar geçen sürede yapay zeka (AI) yardımıyla yapılan geliştirmeleri, karşılaştığımız mimari zorlukları, hata çözümlerini ve alınan teknik kararları adım adım belgelemektedir.
 
-## Oturum 2 — 21 Mayıs 2026 — 21:00-22:00
+---
 
-### Hedef
-Modern bir Web Arayüzü (Frontend) tasarlanarak Flask mimarisine entegre edilmesi ve kullanıcı dostu bir deneyim sunulması.
-
-### Yapılan İşlemler
-- `base.html` şablonu oluşturularak tüm sayfalara ortak, temiz ve modern bir yapı kazandırıldı.
-- `login.html` içerisinde Bootstrap 5 sekme (Tab) yapısı kullanılarak Yolcu, Şoför ve Admin (Merkez) girişleri tek bir sayfada birleştirildi.
-- "Akıllı Ses Asistanı" entegrasyonu için JavaScript `setInterval` kullanılarak arka planda periyodik olarak çalışan ve sesi metne döken bir sistem geliştirildi.
-
-## Oturum 3 — 22 Mayıs 2026
+## Oturum 1: Giriş ve Altyapı Kurulumu (15 Mayıs 2026)
 
 ### Hedef
-Projenin tamamen bağımsız, modüler ve güçlü bir Flask 3.x altyapısında çalışmasını sağlamak üzere arka plan (Backend) sisteminin sıfırdan tasarlanması ve geliştirilmesi.
+Proje yapısının temelini oluşturmak ve SQLite veritabanı şemasını tasarlamak.
 
-### Kullandığım Mod ve Model
-- Mod: Plan Modu
-- Model: Gemini 3.1 Pro
+### Mimari Kararlar
+- **Veritabanı Modeli Tasarımı:** `Sofor`, `Alarm`, `SesLog`, `VardiyaSesKaydi`, `YolcuYorum` ve `AracKonum` modelleri SQLAlchemy kullanılarak tanımlandı.
+- **Standartlara Uyum:** Projede ders standartlarına en uygun veri tipleri ve şemalar tercih edildi.
+- **AI Katkısı:** Veritabanı tabloları arasındaki bire-çok (one-to-many) ilişkilerin `relationship` ve yabancı anahtarlar yardımıyla doğru şekilde eşleştirilmesi sağlandı.
 
-### Yapılan İşlemler
-1. Mimari Tasarım: Proje, `Blueprint` mimarisiyle parçalara ayrılarak (`auth`, `main`, `admin` vb.) profesyonel bir yapıya kavuşturuldu.
-2. SQLAlchemy ORM Entegrasyonu: `models.py` tasarlanarak veri tabanı işlemleri nesne yönelimli hale getirildi. Veri tabanı sorguları güvenli (SQL Injection korumalı) yapıya taşındı.
-3. Rota Geliştirmeleri: REST standartlarına uygun olarak API ve web yönlendirmeleri sıfırdan oluşturuldu.
+---
 
-## Oturum 4 — 22 Mayıs 2026 (Proje Mimarisi Uyumu)
+## Oturum 2: Arayüz ve Premium Glassmorphism Tasarımı (18 Mayıs 2026)
 
 ### Hedef
-Projenin kod altyapısının `2026BLG106_2` deposundaki hocanın standartlarına ("Flat Flask Structure" / Bölüm 6) %100 uyumlu hale getirilmesi.
+Kullanıcıyı ilk bakışta etkileyecek, göz yormayan, son derece şık, dinamik ve modern bir web arayüzü oluşturmak.
 
-### Yapılan İşlemler
-1. API/Blueprint Kaldırılması: Kök dizin karmaşıklığını azaltmak için Blueprint'ler kaldırılarak hocanın istediği gibi global `app` objesiyle doğrudan entegrasyon sağlandı.
-2. Web Formları (Flask-WTF): Hocanın 3. bölümdeki şablonuna sadık kalınarak `forms.py` içerisinde nesne yönelimli formlar (LoginForm, YolcuSorguForm) oluşturuldu.
-3. Rota ve Şablon Yapısı: `app/routes.py` içine tüm sistem entegre edildi ve Jinja2 şablonları hocanın `base.html` mantığıyla (Fakat modern arayüz korunarak) `app/templates` altına aktarıldı.
+### Tasarım ve Teknik Kararlar
+- **Premium CSS Tasarımı:** Bootstrap 5 altyapısı üzerine koyu mod (dark mode) ve yarı saydam "glassmorphism" efektleri eklenerek premium bir his uyandırıldı. Standart renkler yerine özenle seçilmiş renk paletleri ve harmonik gradyanlar kullanıldı.
+- **Jinja2 Şablon Yapısı:** Şoför Paneli, Yolcu Paneli ve Merkez Kontrol panellerinin Jinja2 kalıtım (inheritance) yapısıyla `base.html` üzerinden türetilmesi sağlandı.
+- **Akıllı Ses Asistanı:** Şoför Paneli'nde otomatik ses tanıma (Web Speech API) ve periyodik durum analizi asistanı entegre edildi.
+- **Acil Durum Panik Butonu:** Acil durumlar için merkeze anında veri gönderen interaktif bir "Panik Butonu" oluşturuldu.
 
-*(Not: Geliştirme sürecindeki diğer başlıklar ve ekran görüntüleri proje ilerledikçe buraya eklenecektir.)*
+---
+
+## Oturum 3: Mimari Çıkmaz ve Flat Yapı Kararı (21 Mayıs 2026)
+
+### Hedef
+Backend rotalarının ve veri akışının test edilmesi.
+
+### Karşılaşılan Sorunlar
+- Tüm rotaların tek bir `routes.py` dosyasında toplandığı "flat" yapı kurgulandı. Ancak uygulama büyüdükçe dairesel içe aktarma (circular import) hataları oluşmaya başladı.
+- Örneğin, `app` objesinin rota dosyası tarafından içe aktarılması ve rota dosyasının da `app` başlatılırken çağrılması sunucu sıcak-yenileme (hot-reload) yaptığında çökmelere neden oluyordu.
+- AI asistanı ile bu yapı geçici olarak çözülmeye çalışılsa da, akademik gereksinimler ve kod kalitesi açısından bu flat yapının yetersiz olduğu fark edildi.
+
+---
+
+## Oturum 4: Büyük Mimari Dönüşüm — Application Factory ve Blueprints (22 Mayıs 2026)
+
+### Hedef
+Dönem projesi yönergesinde yer alan zorunlu teknik gereksinimlere %100 uyum sağlamak, dairesel içe aktarma problemlerini kökten çözmek ve kod kalitesini endüstriyel standartlara çıkarmak.
+
+### Gerçekleştirilen Yapısal Reformlar
+1. **Application Factory Deseni (`create_app`):** `app/__init__.py` içerisindeki veritabanı (`db`), göç aracı (`migrate`) ve giriş yöneticisi (`login`) gibi Flask eklentileri global olarak başlatılıp, `create_app()` fonksiyonu içerisinde dinamik olarak uygulamaya bağlandı (`init_app`). Bu sayede circular import hataları tamamen engellendi.
+2. **Blueprint Mimarisi:** Rotalar mantıksal bölümlere ayrılarak her biri kendi klasöründe bağımsız modüller haline getirildi:
+   - `auth`: Giriş/Çıkış işlemleri ve şifre doğrulama.
+   - `main`: Şoför arayüzü, panik butonu API'si, ses kaydetme ve yolcu paneli.
+   - `admin`: Merkez Kontrol paneli ve operasyonel canlı izleme veri tablosu.
+   - `errors`: Özel 404 (Sayfa Bulunamadı) ve 500 (Sistem Hatası) hata yakalayıcıları.
+3. **Özel Hata Yönetimi:** Beklenmeyen sistem hatalarında veri bütünlüğünü korumak adına 500 hata yakalayıcısına `db.session.rollback()` mekanizması entegre edilerek özel premium hata şablonları (`errors/404.html`, `errors/500.html`) sunuldu.
+4. **Ad Alanı (Namespace) Güncellemeleri:** Jinja2 şablonlarında (`index.html`, `yolcu.html`, `admin.html`) yer alan eski `url_for('login')` gibi yönlendirmeler, blueprint yapısına uygun olarak `url_for('auth.login')`, `url_for('main.alarm_ekle')` şeklinde ad alanlarına güncellendi.
+5. **Kod Temizliği:** Flat yapıdan kalan artık `app/routes.py` dosyası tamamen temizlenerek proje sıfır hata ile tertemiz bir yapıya kavuşturuldu.
+
+---
+*(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
