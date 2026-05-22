@@ -84,5 +84,18 @@ Dönem projesi yönergesinde yer alan zorunlu teknik gereksinimlere %100 uyum sa
 - **Eller Serbest (Hands-free) Ses Tanıma:** Web Speech API ile entegre çalışan ses tanıma mekanizmasında şoförün konuşmayı bitirmesinden sonra 2.5 saniye boyunca sessizlik algılandığında sesli doğrulama modalının otomatik olarak onaylanıp formu göndermesi sağlandı. Böylece şoförün sürüş esnasında ekrana dokunma zorunluluğu tamamen ortadan kalktı.
 
 ---
+
+## Oturum 7: Merkez Kontrol Paneli Redesaynı ve 3 Sekmeli Premium Görünüm (22 Mayıs 2026)
+
+### Hedef
+Merkez Kontrol Paneli'nde (`admin.html`) toplanan operasyonel verilerin, ses loglarının, şikayetlerin ve analizlerin oluşturduğu görsel karmaşayı (bilişsel yükü) gidermek, verileri şoför bazlı gruplayarak insanın gözünü yormayan 3 sekmeli premium bir glassmorphic arayüz tasarlamak.
+
+### Teknik Detaylar ve AI Katkısı
+- **3 Sekmeli Modüler Arayüz (Nav-Pills & Glassmorphism):** Sayfa bütününde yayılan tablolar yerine Bootstrap 5 `nav-pills` yapısı kullanılarak 3 farklı bağımsız panel kurgulandı. Koyu arka plana uyumlu yarı saydam glassmorphic kartlar, neon geçişler, özel `pulse` alarm animasyonları ve ekran boyunu aşmayan `max-height` kaydırmalı kutular entegre edildi.
+- **Şoför Bazlı Yolcu Geri Bildirimleri (Collapsible Accordion):** Tüm yolcu puanları, şikayet etiketleri ve serbest yorumlar şoför bazlı gruplandı. Şikayetlerin gözü yormaması için her şoförün altına collapsible (açılır/kapanır) bir akordeon butonu yerleştirilerek istenildiğinde detayların listelenmesi sağlandı.
+- **Şoför Personel Kartları & Canlı Alarmlar (Şifre Gösterimi):** Şoförlerin ad, soyad, kullanıcı adı, plaka ve **açık giriş şifreleri (`sifre_plain`)** premium personel kartları halinde sergilendi. Sağ tarafına ise titreyen kırmızı neon çerçeveli (`pulse-danger-card`) **Çok Acil Canlı Bildirimler** paneli entegre edilerek panik butonları ve kritik asistan uyarıları en tepeye taşındı.
+- **Zaman Tüneli Ses Kayıtları (Timeline Log):** Her şoförün tüm ses kayıtları tek bir sayfada birbiriyle karışmadan ayrı pencerelerde sergilendi. Bir şoförün akordeonu açıldığında sol sütunda **Vardiya Giriş/Çıkış Sözel Raporları** (karşılaştırmalı performans analiz detayları ile birlikte), sağ sütunda ise **Periyodik Sürüş Konuşmaları** kronolojik olarak yan yana konumlandırıldı.
+
+---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
 
