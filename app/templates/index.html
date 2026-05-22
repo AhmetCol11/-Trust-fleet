@@ -276,9 +276,55 @@ document.getElementById('btnPanik').addEventListener('click', function() {
     });
 });
 
-// Test ses butonu için boş stub
-document.getElementById('btnTestSes').addEventListener('click', function() {
-    asistanKonus("Akıllı sesli asistan ses sistemi aktif. Test başarılı.");
-});
+// Periyodik 10 Dakikalık Check-in Mantığı
+const botStatus = document.getElementById('botStatus');
+const sonMetin = document.getElementById('sonMetin');
+
+function periyodikCheckIn() {
+    // Sadece vardiya aktifken periyodik check-in yap
+    {% if vardiya_aktif %}
+    botStatus.innerHTML = '<span class="text-danger"><i class="fa-solid fa-microphone"></i> Seni dinliyorum...</span>';
+    
+    sesliSoruSor("Nasılsınız? Nasıl hissediyorsunuz? Lütfen uykusuzluk ve genel durumunuzu belirtin.", 'periyodik', function(metin1) {
+        sonMetin.innerHTML = '🗣️ (Cevap 1): ' + metin1;
+        
+        // 2. Soru
+        setTimeout(() => {
+            sesliSoruSor("Anlaşıldı. Peki yolculuk nasıl gidiyor?", 'periyodik', function(metin2) {
+                const birlesikCevap = "Soru 1: " + metin1 + " | Soru 2: " + metin2;
+                sonMetin.innerHTML = '🗣️ (Son Analiz): ' + birlesikCevap;
+                
+                fetch('{{ url_for("main.ses_kaydet") }}', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({metin: birlesikCevap})
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.alert_triggered) {
+                        asistanKonus("Dikkat! Yorgunluk veya risk tespit edildi. Acil durum alarmı merkeze iletiliyor!", function() {
+                            alert(data.alert_message);
+                        });
+                        botStatus.innerHTML = '<span class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> RİSK TESPİT EDİLDİ!</span>';
+                    } else {
+                        botStatus.innerHTML = '<span class="text-success"><i class="fa-solid fa-check"></i> Durum İyi, Beklemede.</span>';
+                        setTimeout(() => { 
+                            botStatus.innerHTML = '<span class="text-success"><i class="fa-solid fa-check"></i> Dinlemede (Otomatik)</span>'; 
+                        }, 5000);
+                    }
+                });
+            });
+        }, 1000);
+    });
+    {% endif %}
+}
+
+// 10 dakikada bir otomatik dinle (600.000 ms)
+{% if vardiya_aktif %}
+setInterval(periyodikCheckIn, 600000);
+{% endif %}
+
+// Manuel Asistanı Şimdi Test Et Butonu
+document.getElementById('btnTestSes').addEventListener('click', periyodikCheckIn);
 </script>
 {% endblock %}
