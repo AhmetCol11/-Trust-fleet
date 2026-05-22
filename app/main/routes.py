@@ -5,6 +5,7 @@ from app import db
 from app.main import bp
 from app.models import Sofor, Alarm, SesLog, YolcuYorum, VardiyaSesKaydi
 
+# Karşılaştırmalı Yorgunluk Analiz Motoru
 def analiz_ve_karsilastirma_yap(sofor_id, baslangic, bitis):
     yorgunluk_kelimeleri = ["yoruldum", "yorgun", "çok yoruldum", "bitik", "halsiz", "uyku", "uyuyakaldım", "kötüyüm", "halsizim", "bitkinim", "uykum var", "zor", "ağrıyor", "bitti"]
     
