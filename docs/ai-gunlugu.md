@@ -97,5 +97,18 @@ Merkez Kontrol Paneli'nde (`admin.html`) toplanan operasyonel verilerin, ses log
 - **Zaman Tüneli Ses Kayıtları (Timeline Log):** Her şoförün tüm ses kayıtları tek bir sayfada birbiriyle karışmadan ayrı pencerelerde sergilendi. Bir şoförün akordeonu açıldığında sol sütunda **Vardiya Giriş/Çıkış Sözel Raporları** (karşılaştırmalı performans analiz detayları ile birlikte), sağ sütunda ise **Periyodik Sürüş Konuşmaları** kronolojik olarak yan yana konumlandırıldı.
 
 ---
+
+## Oturum 8: Global Yüksek Kontrast Tasarım, Premium Tipografi ve Renk Uyumsuzluklarının Giderilmesi (22 Mayıs 2026)
+
+### Hedef
+Koyu cam tasarımı altında Bootstrap varsayılan renklerinin neden olduğu düşük kontrastlı ve okunaksız metin alanlarını düzeltmek, genel yazı tipi ailesini modern ve son derece estetik Google Fonts tipografisi ile yenilemek.
+
+### Teknik Detaylar ve AI Katkısı
+- **Google Fonts Entegrasyonu:** Arayüzün geneline Google Fonts üzerinden **Plus Jakarta Sans** ve **Outfit** font aileleri (`base.html` üzerinde) entegre edildi. Bu sayede tarayıcının standart kaba yazı tipleri yerine tamamen modern, yuvarlatılmış ve üst düzey bir kurumsal görünüm sağlandı.
+- **Global Yüksek Kontrastlı Renk Overrides:** Koyu gri arayüzlerde (`.premium-card` ve `.streamlit-container` gibi elementlerin üstünde) Bootstrap varsayılan `.text-secondary` ve `.text-muted` renklerinin neden olduğu okunurluk problemleri, global CSS kuralları ile aşırı parlak gri tonlarına (`#b2b6c1` ve `#8c91a0`) çekilerek çözüldü. Şoför ve yolcu panellerindeki tüm etiketler tamamen okunaklı hale getirildi.
+- **Yüksek Kontrastlı Neon Badgeler:** Şoförlerin plaka bilgisi, kullanıcı adları ve açık şifrelerinin yer aldığı badge elemanlarının iç renklerinin (`text-info`, `text-warning`, vb.) badge'lerin beyaz renk kuralları tarafından ezilmesi engellendi. Alt sınıflar (`badge-custom-dark.text-warning`, `badge-custom-dark.text-info`, vb.) tanımlanarak, tüm önemli metinler tam renklerinde ve kusursuz kontrastla parlar hale getirildi.
+- **Premium Akordeon Buton Renk Uyumları:** Şoför Zaman Tüneli akordeon başlıklarındaki Bootstrap varsayılan mavi odaklanma (focus) ve aktif durum renk uyumsuzlukları koyu temayla mükemmel eşleşen sarı/neon geçişleri ile baştan yazıldı.
+
+---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
 

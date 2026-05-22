@@ -89,6 +89,73 @@
         font-family: 'Courier New', Courier, monospace;
         font-size: 0.9rem;
     }
+    
+    /* Custom High-Contrast Premium Badges */
+    .badge-custom-info {
+        background: rgba(13, 202, 240, 0.15) !important;
+        color: #0dcaf0 !important;
+        border: 1px solid rgba(13, 202, 240, 0.5) !important;
+    }
+    .badge-custom-danger {
+        background: rgba(255, 107, 107, 0.15) !important;
+        color: #ff6b6b !important;
+        border: 1px solid rgba(255, 107, 107, 0.5) !important;
+    }
+    .badge-custom-success {
+        background: rgba(46, 204, 113, 0.15) !important;
+        color: #2ecc71 !important;
+        border: 1px solid rgba(46, 204, 113, 0.5) !important;
+    }
+    .badge-custom-warning {
+        background: rgba(255, 212, 59, 0.15) !important;
+        color: #ffd43b !important;
+        border: 1px solid rgba(255, 212, 59, 0.5) !important;
+    }
+    .badge-custom-dark {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #f1f5f9 !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    }
+    
+    /* Support classes for badge-custom-dark with inner colors */
+    .badge-custom-dark.text-warning {
+        color: #ffd43b !important;
+    }
+    .badge-custom-dark.text-info {
+        color: #0dcaf0 !important;
+    }
+    .badge-custom-dark.text-danger {
+        color: #ff6b6b !important;
+    }
+    .badge-custom-dark.text-muted {
+        color: #a0a5b5 !important;
+    }
+
+    /* Accordion Premium Styling */
+    .accordion-button {
+        color: #fafafa !important;
+        background-color: rgba(22, 24, 31, 0.65) !important;
+        box-shadow: none !important;
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        transition: all 0.2s ease;
+    }
+    .accordion-button:not(.collapsed) {
+        color: #ffd43b !important; /* Accent text on active */
+        background-color: rgba(30, 33, 41, 0.85) !important;
+        border-color: rgba(255, 212, 59, 0.25) !important;
+    }
+    .accordion-button::after {
+        filter: invert(1) grayscale(1) brightness(2); /* White arrow */
+    }
+    .accordion-item {
+        background: transparent !important;
+        border: none !important;
+    }
+    
+    /* General contrast improvements */
+    .text-light-50 {
+        color: rgba(255, 255, 255, 0.65) !important;
+    }
 </style>
 
 <div class="row align-items-center mb-4 mt-3">
@@ -139,7 +206,7 @@
                                 </div>
                                 <div>
                                     <h5 class="fw-bold mb-0 text-light">{{ s.ad }} {{ s.soyad }}</h5>
-                                    <span class="badge bg-dark border border-secondary text-secondary mt-1"><i class="fa-solid fa-bus me-1 text-warning"></i> {{ s.arac_plaka }}</span>
+                                    <span class="badge badge-custom-dark text-warning mt-1"><i class="fa-solid fa-bus me-1 text-warning"></i> {{ s.arac_plaka }}</span>
                                 </div>
                             </div>
                             
@@ -153,9 +220,9 @@
                                     <div class="text-warning fw-bold fs-5 star-rating">
                                         <i class="fa-solid fa-star"></i> {{ avg_rating }} <small class="text-secondary opacity-75">/ 5</small>
                                     </div>
-                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 mt-1">{{ count }} Değerlendirme</span>
+                                    <span class="badge badge-custom-warning mt-1">{{ count }} Değerlendirme</span>
                                 {% else %}
-                                    <span class="badge bg-secondary bg-opacity-20 text-muted border border-secondary border-opacity-20 mt-1">Geri Bildirim Yok</span>
+                                    <span class="badge badge-custom-dark text-muted mt-1">Geri Bildirim Yok</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -193,9 +260,9 @@
                                                     <div class="mb-2">
                                                         {% for t in y.etiketler.split(', ') %}
                                                             {% if 'Hızlı Sürüş' in t or 'Klima Sorunu' in t or 'Çok Yolcu Var' in t or 'Telefonla Konuşuyor' in t or 'Gürültülü' in t %}
-                                                                <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-30 me-1 mb-1 px-2 py-1"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ t }}</span>
+                                                                <span class="badge badge-custom-danger me-1 mb-1 px-2 py-1"><i class="fa-solid fa-circle-exclamation me-1"></i> {{ t }}</span>
                                                             {% else %}
-                                                                <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-30 me-1 mb-1 px-2 py-1"><i class="fa-solid fa-circle-check me-1"></i> {{ t }}</span>
+                                                                <span class="badge badge-custom-success me-1 mb-1 px-2 py-1"><i class="fa-solid fa-circle-check me-1"></i> {{ t }}</span>
                                                             {% endif %}
                                                         {% endfor %}
                                                     </div>
@@ -252,7 +319,7 @@
                                         </div>
                                         <div>
                                             <h5 class="fw-bold mb-1 text-light">{{ s.ad }} {{ s.soyad }}</h5>
-                                            <span class="badge bg-info bg-opacity-15 text-info border border-info border-opacity-25"><i class="fa-solid fa-bus me-1"></i> {{ s.arac_plaka }}</span>
+                                            <span class="badge badge-custom-info"><i class="fa-solid fa-bus me-1"></i> {{ s.arac_plaka }}</span>
                                         </div>
                                     </div>
                                     
@@ -260,13 +327,19 @@
                                     <div class="text-start text-md-end">
                                         <div class="mb-1">
                                             <small class="text-secondary me-1">Kullanıcı Adı:</small>
-                                            <span class="badge bg-dark border border-secondary text-info fw-bold badge-code px-2 py-1"><i class="fa-solid fa-user me-1 text-secondary"></i> {{ s.kullanici_adi }}</span>
+                                            <span class="badge badge-custom-dark text-info fw-bold badge-code px-2 py-1"><i class="fa-solid fa-user me-1 opacity-75"></i> {{ s.kullanici_adi }}</span>
                                         </div>
                                         <div>
                                             <small class="text-secondary me-1">Açık Giriş Şifresi:</small>
-                                            <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-30 fw-bold badge-code px-2 py-1">
-                                                <i class="fa-solid fa-key me-1 text-secondary"></i> {{ s.sifre_plain or 'Plain-text şifre yok' }}
-                                            </span>
+                                            {% if s.sifre_plain %}
+                                                <span class="badge badge-custom-danger fw-bold badge-code px-2 py-1">
+                                                    <i class="fa-solid fa-key me-1 opacity-75"></i> {{ s.sifre_plain }}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge badge-custom-dark text-muted fw-bold badge-code px-2 py-1">
+                                                    <i class="fa-solid fa-key-skeleton me-1 opacity-50"></i> Şifre Yok
+                                                </span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                     
@@ -312,7 +385,7 @@
                                     
                                     <h6 class="fw-bold mb-1 text-light">{{ a.sofor.ad }} {{ a.sofor.soyad }}</h6>
                                     <div class="mb-2">
-                                        <span class="badge bg-dark border border-secondary text-secondary"><i class="fa-solid fa-bus me-1 text-danger"></i> {{ a.sofor.arac_plaka }}</span>
+                                        <span class="badge badge-custom-dark text-danger"><i class="fa-solid fa-bus me-1 text-danger"></i> {{ a.sofor.arac_plaka }}</span>
                                     </div>
                                     
                                     <div class="p-2 rounded bg-danger bg-opacity-10 text-danger border border-danger border-opacity-20 small style-quote" style="font-style: italic; line-height: 1.4;">
@@ -354,11 +427,11 @@
                                     <div>
                                         <i class="fa-solid fa-user-gear text-info me-2 fs-5"></i> 
                                         <span class="fs-5 fw-bold text-light">{{ s.ad }} {{ s.soyad }}</span>
-                                        <span class="badge bg-dark border border-secondary text-secondary ms-2"><i class="fa-solid fa-bus me-1 text-info"></i> {{ s.arac_plaka }}</span>
+                                        <span class="badge badge-custom-dark text-info ms-2"><i class="fa-solid fa-bus me-1 text-info"></i> {{ s.arac_plaka }}</span>
                                     </div>
                                     <div class="text-end">
-                                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 me-2"><i class="fa-solid fa-calendar-check me-1"></i> {{ s_vardiyalar|length }} Vardiya</span>
-                                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25"><i class="fa-solid fa-robot me-1"></i> {{ s_sesloglar|length }} Periyodik</span>
+                                        <span class="badge badge-custom-warning me-2"><i class="fa-solid fa-calendar-check me-1"></i> {{ s_vardiyalar|length }} Vardiya</span>
+                                        <span class="badge badge-custom-info"><i class="fa-solid fa-robot me-1"></i> {{ s_sesloglar|length }} Periyodik</span>
                                     </div>
                                 </div>
                             </button>
@@ -382,11 +455,11 @@
                                                             <small class="text-secondary fw-bold"><i class="fa-solid fa-calendar-day me-1"></i> {{ vk.tarih_saat }}</small>
                                                             
                                                             {% if 'NORMAL' in vk.analiz_sonucu or 'DİNÇ' in vk.analiz_sonucu or 'İyi' in vk.analiz_sonucu %}
-                                                                <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-30 px-2 py-1 fw-bold"><i class="fa-solid fa-circle-check me-1"></i> {{ vk.analiz_sonucu }}</span>
+                                                                <span class="badge badge-custom-success px-2 py-1 fw-bold"><i class="fa-solid fa-circle-check me-1"></i> {{ vk.analiz_sonucu }}</span>
                                                             {% elif 'YORGUN' in vk.analiz_sonucu or 'RİSK' in vk.analiz_sonucu or 'Kötü' in vk.analiz_sonucu %}
-                                                                <span class="badge bg-danger bg-opacity-15 text-danger border border-danger border-opacity-30 px-2 py-1 fw-bold"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ vk.analiz_sonucu }}</span>
+                                                                <span class="badge badge-custom-danger px-2 py-1 fw-bold"><i class="fa-solid fa-triangle-exclamation me-1"></i> {{ vk.analiz_sonucu }}</span>
                                                             {% else %}
-                                                                <span class="badge bg-warning bg-opacity-15 text-warning border border-warning border-opacity-30 px-2 py-1 fw-bold"><i class="fa-solid fa-circle-question me-1"></i> {{ vk.analiz_sonucu }}</span>
+                                                                <span class="badge badge-custom-warning px-2 py-1 fw-bold"><i class="fa-solid fa-circle-question me-1"></i> {{ vk.analiz_sonucu }}</span>
                                                             {% endif %}
                                                         </div>
                                                         
@@ -428,7 +501,7 @@
                                                 <div class="bg-dark bg-opacity-35 p-3 rounded mb-3 border border-secondary border-opacity-50" style="background-color: rgba(30, 33, 41, 0.4) !important;">
                                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                                         <small class="text-secondary fw-bold"><i class="fa-solid fa-clock me-1"></i> {{ l.tarih_saat }}</small>
-                                                        <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 small px-2 py-1"><i class="fa-solid fa-microphone me-1"></i> Asistan Tespiti</span>
+                                                        <span class="badge badge-custom-info small px-2 py-1"><i class="fa-solid fa-microphone me-1"></i> Asistan Tespiti</span>
                                                     </div>
                                                     <div class="p-2 rounded bg-dark bg-opacity-50 border border-secondary border-opacity-50 text-light" style="font-style: italic; font-size: 0.95rem; line-height: 1.4;">
                                                         "{{ l.metin }}"
