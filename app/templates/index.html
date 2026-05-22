@@ -136,10 +136,14 @@ const voiceModalDesc = document.getElementById('voiceModalDesc');
 let onVoiceConfirmCallback = null;
 let activeRecognition = null;
 let currentListenType = ''; // 'baslangic', 'bitis', 'periyodik'
+let silenceTimer = null; // Otomatik gönderme sessizlik sayacı
 
 function sesliSoruSor(soruMetni, listenType, onConfirm) {
     currentListenType = listenType;
     onVoiceConfirmCallback = onConfirm;
+    
+    // Her yeni aramada zamanlayıcıyı temizle
+    clearTimeout(silenceTimer);
     
     // Modal başlık ve açıklama
     if (listenType === 'baslangic') {
@@ -171,19 +175,38 @@ function sesliSoruSor(soruMetni, listenType, onConfirm) {
         
         const recognition = new SpeechRecognition();
         recognition.lang = 'tr-TR';
-        recognition.interimResults = false;
+        recognition.continuous = true; // Konuşmayı kesmeden dinlemeye devam eder
+        recognition.interimResults = true; // Anlık sonuçları da iletir (kelimelerin yutulmasını engeller)
+        recognition.maxAlternatives = 1;
         activeRecognition = recognition;
         
         recognition.onresult = function(event) {
-            const transcript = event.results[0][0].transcript;
-            voiceTextEdit.value = transcript;
+            let fullTranscript = '';
+            for (let i = 0; i < event.results.length; ++i) {
+                fullTranscript += event.results[i][0].transcript;
+            }
+            
+            voiceTextEdit.value = fullTranscript.trim();
             btnVoiceConfirm.disabled = false;
-            voiceModalDesc.innerHTML = '✅ <b>Ses algılandı!</b> Metinde hata varsa tıklayıp düzeltebilirsiniz.';
+            voiceModalDesc.innerHTML = '✅ <b>Ses algılanıyor...</b> Konuşmayı kestiğinizde 2.5 saniye sonra otomatik onaylanıp gönderilecektir.';
+            
+            // Sessizlik algılandığında otomatik gönderim yapacak sayacı sıfırla ve yeniden kur
+            clearTimeout(silenceTimer);
+            silenceTimer = setTimeout(function() {
+                voiceModalDesc.innerHTML = '⏳ <b>Sessizlik algılandı!</b> Otomatik onaylanıyor...';
+                recognition.stop();
+                setTimeout(() => {
+                    btnVoiceConfirm.click();
+                }, 400);
+            }, 2500);
         };
         
         recognition.onerror = function(event) {
-            voiceModalDesc.innerHTML = '❌ <b>Ses algılanamadı!</b> Aşağıdaki butona basarak yeniden konuşabilir veya elinizle yazabilirsiniz.';
-            btnVoiceConfirm.disabled = false;
+            // Arka plandaki bazı ses kesilmelerinde veya gürültüde durmayı önlemek için sessizce devam edelim
+            if (event.error !== 'no-speech') {
+                voiceModalDesc.innerHTML = '❌ <b>Ses algılanamadı!</b> Aşağıdaki butona basarak yeniden konuşabilir veya elinizle yazabilirsiniz.';
+                btnVoiceConfirm.disabled = false;
+            }
         };
         
         recognition.start();
@@ -192,6 +215,7 @@ function sesliSoruSor(soruMetni, listenType, onConfirm) {
 
 // Onaylama Butonu
 btnVoiceConfirm.addEventListener('click', function() {
+    clearTimeout(silenceTimer);
     voiceModal.hide();
     if (activeRecognition) {
         activeRecognition.abort();
@@ -203,6 +227,7 @@ btnVoiceConfirm.addEventListener('click', function() {
 
 // Yeniden Söyle Butonu
 btnVoiceRetry.addEventListener('click', function() {
+    clearTimeout(silenceTimer);
     let retrySoru = "Dinliyorum, lütfen tekrar cevap verin.";
     sesliSoruSor(retrySoru, currentListenType, onVoiceConfirmCallback);
 });
