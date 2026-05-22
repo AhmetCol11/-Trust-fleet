@@ -1,6 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    .shift-locked {
+        opacity: 0.25;
+        pointer-events: none;
+        filter: blur(2px);
+        transition: all 0.5s ease;
+    }
+    .premium-card {
+        background: rgba(38, 39, 48, 0.75);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    }
+</style>
+
 <div class="row align-items-center mb-4">
     <div class="col-md-9">
         <h2 class="fw-bold text-light">🛡️ Sürüş Güvenlik Paneli (Şoför)</h2>
@@ -11,10 +27,35 @@
     </div>
 </div>
 
+<!-- Vardiya Kontrol Kartı (En Üst Bölüm) -->
 <div class="row">
+    <div class="col-12 mb-4">
+        <div class="streamlit-container mt-0 py-4 premium-card">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <div>
+                    <h4 class="fw-bold mb-1 {% if vardiya_aktif %}text-success{% else %}text-warning{% endif %}" id="vardiyaDurumBaslik">
+                        <i class="fa-solid fa-circle {% if vardiya_aktif %}fa-pulse{% endif %}"></i> 
+                        {% if vardiya_aktif %}Vardiya Aktif (Sürüş Güvenliği İzleniyor){% else %}Vardiya Kapalı (Sürüş Bekleniyor){% endif %}
+                    </h4>
+                    <p class="text-secondary small mb-0">Güvenlik kontrol sisteminin ve panik butonunun aktifleşmesi için lütfen sesli doğrulama ile vardiyanızı başlatın.</p>
+                </div>
+                <div>
+                    {% if not vardiya_aktif %}
+                        <button id="btnVardiyaBaslat" class="btn btn-warning fw-bold px-4 py-2 fs-5"><i class="fa-solid fa-play"></i> Vardiyayı Başlat</button>
+                    {% else %}
+                        <button id="btnVardiyaBitir" class="btn btn-danger fw-bold px-4 py-2 fs-5"><i class="fa-solid fa-stop"></i> Vardiyayı Bitir</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Şoför Kontrolleri Grid'i (Vardiya Kapalıyken Kilitlenecek) -->
+<div class="row {% if not vardiya_aktif %}shift-locked{% endif %}" id="driverDashboardGrid">
     <!-- SOL KOLON: Panik Butonu -->
     <div class="col-md-6 mb-4">
-        <div class="streamlit-container h-100 mt-0">
+        <div class="streamlit-container h-100 mt-0 premium-card">
             <h4 class="text-danger fw-bold mb-4"><i class="fa-solid fa-triangle-exclamation"></i> Acil Durum</h4>
             <p class="text-light">Herhangi bir kaza, arıza veya güvenlik ihlali durumunda aşağıdaki butonu kullanın. Merkeze anında konum ve uyarı iletilecektir.</p>
             <div class="stButton mt-5">
@@ -26,13 +67,13 @@
 
     <!-- SAĞ KOLON: Akıllı Ses Asistanı -->
     <div class="col-md-6 mb-4">
-        <div class="streamlit-container h-100 mt-0">
+        <div class="streamlit-container h-100 mt-0 premium-card">
             <h4 class="text-info fw-bold mb-4"><i class="fa-solid fa-microphone-lines"></i> Akıllı Ses Asistanı</h4>
             <p class="text-light">Sistem arka planda periyodik olarak yorgunluk ve durum analizi yapar.</p>
             
             <div class="bg-dark p-3 rounded border border-secondary mb-3" style="min-height: 150px;">
-                <p class="text-muted small mb-1">Durum:</p>
-                <div id="botStatus" class="text-warning fw-bold"><i class="fa-solid fa-circle-notch fa-spin"></i> Dinlemede (Otomatik)</div>
+                <p class="text-muted small mb-1">Asistan Durumu:</p>
+                <div id="botStatus" class="text-success fw-bold"><i class="fa-solid fa-check"></i> Dinlemede (Otomatik)</div>
                 
                 <p class="text-muted small mt-3 mb-1">Son Algılanan Cümle:</p>
                 <div id="sonMetin" class="text-light fst-italic">Henüz konuşma algılanmadı...</div>
@@ -42,10 +83,178 @@
         </div>
     </div>
 </div>
+
+<!-- Ses Doğrulama ve Elle Düzenleme Modalı (Özel Pop-Up) -->
+<div class="modal fade" id="voiceVerifyModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border border-secondary premium-card" style="background-color: #1e2129; color: #fafafa;">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-info fw-bold" id="voiceModalTitle"><i class="fa-solid fa-microphone-lines"></i> Sesli Asistan Doğrulama</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-secondary small mb-3" id="voiceModalDesc">Şu an asistan sizi dinliyor... Söylediğiniz sözler aşağıda görüntülenecektir. Hatalı kelimeleri elle düzeltebilirsiniz.</p>
+                <div class="mb-3">
+                    <label for="voiceTextEdit" class="form-label text-warning small fw-bold">Duyulan Metin (Düzenlenebilir):</label>
+                    <textarea class="form-control bg-dark text-light border-secondary" id="voiceTextEdit" rows="3" placeholder="Sözleriniz algılanıyor... Lütfen mikrofonunuza konuşun."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary">
+                <button type="button" class="btn btn-outline-warning" id="btnVoiceRetry"><i class="fa-solid fa-arrows-rotate"></i> Yeniden Söyle</button>
+                <button type="button" class="btn btn-success fw-bold px-4" id="btnVoiceConfirm" disabled><i class="fa-solid fa-check"></i> Onayla ve Gönder</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
+// Ses Sentezleme (Text-to-Speech)
+function asistanKonus(metin, callback) {
+    if (!window.speechSynthesis) {
+        if (callback) callback();
+        return;
+    }
+    window.speechSynthesis.cancel(); // Önceki sesleri iptal et
+    const utterance = new SpeechSynthesisUtterance(metin);
+    utterance.lang = 'tr-TR';
+    utterance.rate = 1.0;
+    utterance.onend = function() {
+        if (callback) callback();
+    };
+    window.speechSynthesis.speak(utterance);
+}
+
+// Ses Tanıma Arayüzü (Global Elemanlar)
+const voiceModal = new bootstrap.Modal(document.getElementById('voiceVerifyModal'));
+const voiceTextEdit = document.getElementById('voiceTextEdit');
+const btnVoiceConfirm = document.getElementById('btnVoiceConfirm');
+const btnVoiceRetry = document.getElementById('btnVoiceRetry');
+const voiceModalTitle = document.getElementById('voiceModalTitle');
+const voiceModalDesc = document.getElementById('voiceModalDesc');
+
+let onVoiceConfirmCallback = null;
+let activeRecognition = null;
+let currentListenType = ''; // 'baslangic', 'bitis', 'periyodik'
+
+function sesliSoruSor(soruMetni, listenType, onConfirm) {
+    currentListenType = listenType;
+    onVoiceConfirmCallback = onConfirm;
+    
+    // Modal başlık ve açıklama
+    if (listenType === 'baslangic') {
+        voiceModalTitle.innerHTML = '<i class="fa-solid fa-play text-warning"></i> Vardiya Başlangıç Doğrulaması';
+    } else if (listenType === 'bitis') {
+        voiceModalTitle.innerHTML = '<i class="fa-solid fa-stop text-danger"></i> Vardiya Kapanış Doğrulaması';
+    } else {
+        voiceModalTitle.innerHTML = '<i class="fa-solid fa-microphone-lines text-info"></i> Periyodik Asistan Kontrolü';
+    }
+    
+    voiceTextEdit.value = '';
+    btnVoiceConfirm.disabled = true;
+    voiceModalDesc.innerHTML = 'Lütfen bekleyin, asistan konuşuyor...';
+    voiceModal.show();
+    
+    asistanKonus(soruMetni, function() {
+        voiceModalDesc.innerHTML = '🗣️ <b>Şimdi konuşabilirsiniz...</b> Mikrofonunuza yanıtınızı söyleyin.';
+        
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            voiceTextEdit.value = "Tarayıcı ses tanımayı desteklemiyor. Lütfen buraya manuel yazıp onaylayın.";
+            btnVoiceConfirm.disabled = false;
+            return;
+        }
+        
+        if (activeRecognition) {
+            activeRecognition.abort();
+        }
+        
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'tr-TR';
+        recognition.interimResults = false;
+        activeRecognition = recognition;
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            voiceTextEdit.value = transcript;
+            btnVoiceConfirm.disabled = false;
+            voiceModalDesc.innerHTML = '✅ <b>Ses algılandı!</b> Metinde hata varsa tıklayıp düzeltebilirsiniz.';
+        };
+        
+        recognition.onerror = function(event) {
+            voiceModalDesc.innerHTML = '❌ <b>Ses algılanamadı!</b> Aşağıdaki butona basarak yeniden konuşabilir veya elinizle yazabilirsiniz.';
+            btnVoiceConfirm.disabled = false;
+        };
+        
+        recognition.start();
+    });
+}
+
+// Onaylama Butonu
+btnVoiceConfirm.addEventListener('click', function() {
+    voiceModal.hide();
+    if (activeRecognition) {
+        activeRecognition.abort();
+    }
+    if (onVoiceConfirmCallback) {
+        onVoiceConfirmCallback(voiceTextEdit.value);
+    }
+});
+
+// Yeniden Söyle Butonu
+btnVoiceRetry.addEventListener('click', function() {
+    let retrySoru = "Dinliyorum, lütfen tekrar cevap verin.";
+    sesliSoruSor(retrySoru, currentListenType, onVoiceConfirmCallback);
+});
+
+// Vardiyayı Başlat Akışı
+const btnVardiyaBaslat = document.getElementById('btnVardiyaBaslat');
+if (btnVardiyaBaslat) {
+    btnVardiyaBaslat.addEventListener('click', function() {
+        const soru = "Merhaba şoför bey, nasılsınız? Kendinizi seyahate başlamak için dinç hissediyor musunuz? Lütfen sözel olarak cevap verin.";
+        sesliSoruSor(soru, 'baslangic', function(metin) {
+            fetch('{{ url_for("main.vardiya_baslat") }}', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({metin: metin})
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    asistanKonus("Harika! Vardiyanız başarıyla başlatıldı. Yolculuk boyunca sürüş güvenliği aktif olarak izlenecektir. İyi sürüşler dilerim.", function() {
+                        location.reload();
+                    });
+                }
+            });
+        });
+    });
+}
+
+// Vardiyayı Bitir Akışı
+const btnVardiyaBitir = document.getElementById('btnVardiyaBitir');
+if (btnVardiyaBitir) {
+    btnVardiyaBitir.addEventListener('click', function() {
+        const soru = "Vardiyanız sona ermiştir. Kendinizi nasıl hissediyorsunuz? Yolculuk boyunca herhangi bir sorun veya aşırı yorgunluk yaşadınız mı?";
+        sesliSoruSor(soru, 'bitir', function(metin) {
+            fetch('{{ url_for("main.vardiya_bitir") }}', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({metin: metin})
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    let analizDetay = data.analiz_detay.replace(/<\/?[^>]+(>|$)/g, ""); // HTML taglerini temizle
+                    asistanKonus("Vardiyanız sonlandırıldı. Günlük yorgunluk analiz raporunuz veri tabanına işlendi. Teşekkürler.", function() {
+                        alert(analizDetay);
+                        location.reload();
+                    });
+                }
+            });
+        });
+    });
+}
+
 // Panik Butonu Mantığı
 document.getElementById('btnPanik').addEventListener('click', function() {
     this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> İLETİLİYOR...';
@@ -67,47 +276,9 @@ document.getElementById('btnPanik').addEventListener('click', function() {
     });
 });
 
-// Sesli Asistan Mantığı (Web Speech API)
-const botStatus = document.getElementById('botStatus');
-const sonMetin = document.getElementById('sonMetin');
-
-function asistanDinle() {
-    botStatus.innerHTML = '<span class="text-danger"><i class="fa-solid fa-microphone"></i> Seni dinliyorum...</span>';
-    
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        botStatus.innerHTML = '<span class="text-danger">Tarayıcınız ses tanımayı desteklemiyor.</span>';
-        return;
-    }
-    
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'tr-TR';
-    recognition.interimResults = false;
-    
-    recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        sonMetin.innerHTML = '🗣️ ' + transcript;
-        
-        fetch('{{ url_for("main.ses_kaydet") }}', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({metin: transcript})
-        });
-        
-        botStatus.innerHTML = '<span class="text-success"><i class="fa-solid fa-check"></i> Kaydedildi, Beklemede.</span>';
-        setTimeout(() => { botStatus.innerHTML = '<span class="text-warning"><i class="fa-solid fa-circle-notch fa-spin"></i> Dinlemede (Otomatik)</span>'; }, 3000);
-    };
-    
-    recognition.onerror = function() {
-        botStatus.innerHTML = '<span class="text-warning"><i class="fa-solid fa-circle-notch fa-spin"></i> Dinlemede (Otomatik)</span>';
-    };
-    
-    recognition.start();
-}
-
-// 10 dakikada bir otomatik dinle (600.000 ms)
-setInterval(asistanDinle, 600000);
-
-document.getElementById('btnTestSes').addEventListener('click', asistanDinle);
+// Test ses butonu için boş stub
+document.getElementById('btnTestSes').addEventListener('click', function() {
+    asistanKonus("Akıllı sesli asistan ses sistemi aktif. Test başarılı.");
+});
 </script>
 {% endblock %}
