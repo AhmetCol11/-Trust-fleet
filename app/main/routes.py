@@ -5,18 +5,54 @@ from app import db
 from app.main import bp
 from app.models import Sofor, Alarm, SesLog, YolcuYorum, VardiyaSesKaydi
 
+# Akıllı Türkçe Yorgunluk & Risk Analiz Motoru
+def yorgunluk_analiz_et(metin):
+    if not metin:
+        return False
+    metin_lower = metin.lower()
+    
+    # Yorgunluk/Risk belirten kelimeler
+    yorgunluk_kelimeleri = ["yoruldum", "yorgun", "bitik", "halsiz", "uykusuz", "uyku", "uyuyakaldım", "kötüyüm", "halsizim", "bitkinim", "uykum", "zor", "ağrıyor"]
+    
+    # Negatif / Olumlu belirteçler (Aynı cümlede geçiyorsa riski temizler)
+    negasyonlar = ["değil", "değilim", "yok", "iyiyim", "iyi", "dinç", "sorunsuz", "sıkıntı yok", "sorun yok", "güzel"]
+    
+    # Metni cümle veya ifadelere ayıralım
+    cumleler = [c.strip() for c in metin_lower.replace('|', '.').replace(',', '.').split('.') if c.strip()]
+    
+    tehlikeli = False
+    for cumle in cumleler:
+        has_risk_word = False
+        for k in yorgunluk_kelimeleri:
+            if k in cumle:
+                has_risk_word = True
+                break
+        
+        if has_risk_word:
+            # Olumlu ifade veya negasyon kontrolü
+            has_negation = False
+            for n in negasyonlar:
+                if n in cumle:
+                    has_negation = True
+                    break
+            
+            # Eğer cümlede yorgunluk geçiyor ama olumlu/negatif bir belirteç YOKSA tehlikeli kabul et
+            if not has_negation:
+                tehlikeli = True
+                break
+                
+    return tehlikeli
+
 # Karşılaştırmalı Yorgunluk Analiz Motoru
 def analiz_ve_karsilastirma_yap(sofor_id, baslangic, bitis):
-    yorgunluk_kelimeleri = ["yoruldum", "yorgun", "çok yoruldum", "bitik", "halsiz", "uyku", "uyuyakaldım", "kötüyüm", "halsizim", "bitkinim", "uykum var", "zor", "ağrıyor", "bitti"]
-    
     baslangic = baslangic or ""
     bitis = bitis or ""
     
     bas_kelime = len(baslangic.split())
     bit_kelime = len(bitis.split())
     
-    bas_yorgunluk = any(k in baslangic.lower() for k in yorgunluk_kelimeleri)
-    bit_yorgunluk = any(k in bitis.lower() for k in yorgunluk_kelimeleri)
+    bas_yorgunluk = yorgunluk_analiz_et(baslangic)
+    bit_yorgunluk = yorgunluk_analiz_et(bitis)
     
     detaylar = []
     detaylar.append("🔍 <b>KARŞILAŞTIRMALI YORGUNLUK ANALİZ RAPORU</b>")
@@ -95,8 +131,7 @@ def ses_kaydet():
     simdi = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Yorgunluk/Risk analizi
-    yorgunluk_kelimeleri = ["yoruldum", "yorgun", "çok yoruldum", "bitik", "halsiz", "uyku", "uyuyakaldım", "kötüyüm", "halsizim", "bitkinim", "uykum var"]
-    tehlikeli = any(k in metin.lower() for k in yorgunluk_kelimeleri)
+    tehlikeli = yorgunluk_analiz_et(metin)
     
     log = SesLog(sofor_id=current_user.id, metin=metin, tarih_saat=simdi)
     db.session.add(log)
