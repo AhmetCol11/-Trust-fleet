@@ -5,27 +5,25 @@ Bu günlük, projenin AI ajanları ile nasıl geliştirildiğini, alınan mimari
 ## Oturum 2 — 21 Mayıs 2026 — 21:00-22:00
 
 ### Hedef
-Eski Streamlit tabanlı projenin görsel yapısının birebir alınarak Flask mimarisine "Web Arayüzü" (Frontend) olarak entegre edilmesi.
+Modern bir Web Arayüzü (Frontend) tasarlanarak Flask mimarisine entegre edilmesi ve kullanıcı dostu bir deneyim sunulması.
 
 ### Yapılan İşlemler
-- `base.html` üzerinden Navbar kaldırılarak tam ekran yapıya geçildi.
-- `login.html` içerisinde Streamlit'in orijinal yapısına sadık kalınarak 3 sekmeli (Yolcu, Şoför, Admin) giriş ekranı tasarlandı.
-- JavaScript `setInterval` ile her 10 dakikada bir "Nasılsınız?" sorusunu sorup dinleyen "Akıllı Ses Asistanı" entegrasyonu Web üzerinden yapıldı.
+- `base.html` şablonu oluşturularak tüm sayfalara ortak, temiz ve modern bir yapı kazandırıldı.
+- `login.html` içerisinde Bootstrap 5 sekme (Tab) yapısı kullanılarak Yolcu, Şoför ve Admin (Merkez) girişleri tek bir sayfada birleştirildi.
+- "Akıllı Ses Asistanı" entegrasyonu için JavaScript `setInterval` kullanılarak arka planda periyodik olarak çalışan ve sesi metne döken bir sistem geliştirildi.
 
 ## Oturum 3 — 22 Mayıs 2026
 
 ### Hedef
-Flutter mobil uygulamasına veri sağlayan eski `api.py` ve `database.py` altyapısının Web arayüzü çöpe atılarak salt "API (Backend)" olarak modüler Flask 3.x ve SQLAlchemy mimarisine dönüştürülmesi. (Flutter 404 hatalarının çözülmesi).
+Projenin tamamen bağımsız, modüler ve güçlü bir Flask 3.x altyapısında çalışmasını sağlamak üzere arka plan (Backend) sisteminin sıfırdan tasarlanması ve geliştirilmesi.
 
 ### Kullandığım Mod ve Model
 - Mod: Plan Modu
 - Model: Gemini 3.1 Pro
 
 ### Yapılan İşlemler
-1. Web Arayüzü Temizliği: `auth`, `main`, `admin`, `yolcu`, `templates`, `static` klasörleri silinerek sadece API mimarisine geçiş yapıldı.
-2. SQLAlchemy ORM Entegrasyonu: `models.py` içindeki tüm tablolar JSON serialize edilebilecek şekilde `to_dict()` metotlarıyla donatıldı.
-3. API Blueprint Kurulumu: Flutter uygulamasının beklediği tüm uç noktalar (örn: `/api/sofor/login`) `app/api/routes.py` içerisine aktarıldı.
-4. Bug-Fix (404 Not Found Hatası): Flutter uygulamasının `http://localhost:5000/api/...` olarak istek atması ancak rotalarda `/api` prefix'inin unutulması üzerine `app/__init__.py` içerisindeki Blueprint kaydına `url_prefix='/api'` parametresi eklenerek sorun çözüldü.
-5. Windows Console Bug-Fix: `run.py` içindeki emojilerin komut satırında Unicode hatası vermemesi için emojiler kaldırıldı.
+1. Mimari Tasarım: Proje, `Blueprint` mimarisiyle parçalara ayrılarak (`auth`, `main`, `admin` vb.) profesyonel bir yapıya kavuşturuldu.
+2. SQLAlchemy ORM Entegrasyonu: `models.py` tasarlanarak veri tabanı işlemleri nesne yönelimli hale getirildi. Veri tabanı sorguları güvenli (SQL Injection korumalı) yapıya taşındı.
+3. Rota Geliştirmeleri: REST standartlarına uygun olarak API ve web yönlendirmeleri sıfırdan oluşturuldu.
 
 *(Not: Geliştirme sürecindeki diğer başlıklar ve ekran görüntüleri proje ilerledikçe buraya eklenecektir.)*
