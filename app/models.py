@@ -3,9 +3,14 @@ from datetime import datetime
 from typing import Optional, List
 from sqlalchemy import Integer, String, Text, Float, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from app import db
+from flask_login import UserMixin
+from app import db, login
 
-class Sofor(db.Model):
+@login.user_loader
+def load_user(id):
+    return db.session.get(Sofor, int(id))
+
+class Sofor(UserMixin, db.Model):
     __tablename__ = 'soforler'
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     ad: Mapped[str] = mapped_column(String(100), nullable=False)

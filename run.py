@@ -1,7 +1,5 @@
-from app import create_app, db
+from app import app, db
 from app.models import Sofor, Alarm, SesLog, VardiyaSesKaydi, YolcuYorum, AracKonum
-
-app = create_app()
 
 @app.shell_context_processor
 def make_shell_context():
@@ -16,8 +14,5 @@ def make_shell_context():
     }
 
 if __name__ == '__main__':
-    print("Moduler Mobil API Sunucusu Baslatiliyor...")
-    print("Cihazlardan (Flutter) baglanmak icin 'http://0.0.0.0:5000' kullanabilirsiniz.")
+    print("Surus Guvenlik Web Sunucusu Baslatiliyor...")
     app.run(host='0.0.0.0', port=5000, debug=True)
-
-

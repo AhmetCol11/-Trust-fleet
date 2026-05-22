@@ -1,25 +1,16 @@
-import os
 from flask import Flask
+from config import Config
 from flask_sqlalchemy import SQLAlchemy
-from flask_cors import CORS
+from flask_migrate import Migrate
+from flask_login import LoginManager
 
-db = SQLAlchemy()
+app = Flask(__name__)
+app.config.from_object(Config)
 
-def create_app(test_config=None):
-    app = Flask(__name__)
-    
-    # API olduğu için CORS ekliyoruz (Mobil cihazlar bağlanabilsin diye)
-    CORS(app)
-    
-    app.config['SECRET_KEY'] = 'dev-secret-key'
-    db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'sofor_guvenlik.db')
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+login = LoginManager(app)
+login.login_view = 'login'
+login.login_message = 'Bu sayfayı görmek için lütfen giriş yapın.'
 
-    db.init_app(app)
-
-    # API Blueprint'ini kaydet
-    from app.api import bp as api_bp
-    app.register_blueprint(api_bp, url_prefix='/api')
-
-    return app
+from app import routes, models
