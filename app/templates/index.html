@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+    <div class="col-md-9">
+        <h2 class="fw-bold text-light">🛡️ Sürüş Güvenlik Paneli (Şoför)</h2>
+        <p class="text-secondary">Hoşgeldiniz, <b>{{ current_user.ad }} {{ current_user.soyad }}</b> | Araç: {{ current_user.arac_plaka }}</p>
+    </div>
+    <div class="col-md-3 text-end">
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger fw-bold">🚪 Çıkış Yap</a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- SOL KOLON: Panik Butonu -->
+    <div class="col-md-6 mb-4">
+        <div class="streamlit-container h-100 mt-0">
+            <h4 class="text-danger fw-bold mb-4"><i class="fa-solid fa-triangle-exclamation"></i> Acil Durum</h4>
+            <p class="text-light">Herhangi bir kaza, arıza veya güvenlik ihlali durumunda aşağıdaki butonu kullanın. Merkeze anında konum ve uyarı iletilecektir.</p>
+            <div class="stButton mt-5">
+                <button id="btnPanik" class="btn btn-lg py-4 fs-3" style="border-radius: 15px;"><i class="fa-solid fa-bell"></i> PANİK BUTONU</button>
+            </div>
+            <div id="panikSonuc" class="mt-3 fw-bold"></div>
+        </div>
+    </div>
+
+    <!-- SAĞ KOLON: Akıllı Ses Asistanı -->
+    <div class="col-md-6 mb-4">
+        <div class="streamlit-container h-100 mt-0">
+            <h4 class="text-info fw-bold mb-4"><i class="fa-solid fa-microphone-lines"></i> Akıllı Ses Asistanı</h4>
+            <p class="text-light">Sistem arka planda periyodik olarak yorgunluk ve durum analizi yapar.</p>
+            
+            <div class="bg-dark p-3 rounded border border-secondary mb-3" style="min-height: 150px;">
+                <p class="text-muted small mb-1">Durum:</p>
+                <div id="botStatus" class="text-warning fw-bold"><i class="fa-solid fa-circle-notch fa-spin"></i> Dinlemede (Otomatik)</div>
+                
+                <p class="text-muted small mt-3 mb-1">Son Algılanan Cümle:</p>
+                <div id="sonMetin" class="text-light fst-italic">Henüz konuşma algılanmadı...</div>
+            </div>
+            
+            <button id="btnTestSes" class="btn btn-outline-info w-100 btn-sm mt-auto">🤖 Asistanı Şimdi Test Et (Sesi Dinle)</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Panik Butonu Mantığı
+document.getElementById('btnPanik').addEventListener('click', function() {
+    this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> İLETİLİYOR...';
+    this.classList.add('disabled');
+    
+    fetch('{{ url_for("alarm_ekle") }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({sebep: 'Şoför manuel Panik Butonu tetikledi!'})
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('panikSonuc').innerHTML = '<span class="text-success"><i class="fa-solid fa-check"></i> Alarm Merkeze İletildi!</span>';
+        setTimeout(() => {
+            document.getElementById('btnPanik').innerHTML = '<i class="fa-solid fa-bell"></i> PANİK BUTONU';
+            document.getElementById('btnPanik').classList.remove('disabled');
+            document.getElementById('panikSonuc').innerHTML = '';
+        }, 3000);
+    });
+});
+
+// Sesli Asistan Mantığı (Web Speech API)
+const botStatus = document.getElementById('botStatus');
+const sonMetin = document.getElementById('sonMetin');
+
+function asistanDinle() {
+    botStatus.innerHTML = '<span class="text-danger"><i class="fa-solid fa-microphone"></i> Seni dinliyorum...</span>';
+    
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        botStatus.innerHTML = '<span class="text-danger">Tarayıcınız ses tanımayı desteklemiyor.</span>';
+        return;
+    }
+    
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'tr-TR';
+    recognition.interimResults = false;
+    
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        sonMetin.innerHTML = '🗣️ ' + transcript;
+        
+        fetch('{{ url_for("ses_kaydet") }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({metin: transcript})
+        });
+        
+        botStatus.innerHTML = '<span class="text-success"><i class="fa-solid fa-check"></i> Kaydedildi, Beklemede.</span>';
+        setTimeout(() => { botStatus.innerHTML = '<span class="text-warning"><i class="fa-solid fa-circle-notch fa-spin"></i> Dinlemede (Otomatik)</span>'; }, 3000);
+    };
+    
+    recognition.onerror = function() {
+        botStatus.innerHTML = '<span class="text-warning"><i class="fa-solid fa-circle-notch fa-spin"></i> Dinlemede (Otomatik)</span>';
+    };
+    
+    recognition.start();
+}
+
+// 10 dakikada bir otomatik dinle (600.000 ms)
+setInterval(asistanDinle, 600000);
+
+document.getElementById('btnTestSes').addEventListener('click', asistanDinle);
+</script>
+{% endblock %}

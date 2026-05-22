@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="streamlit-container mt-5">
+    <div class="text-center mb-4">
+        <h1>🚌 Sürüş Güvenlik Sistemi</h1>
+        <p class="text-secondary">Lütfen giriş yapmak istediğiniz paneli seçin</p>
+    </div>
+
+    <!-- Sekmeler -->
+    <ul class="nav nav-tabs justify-content-center mb-4" id="loginTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="yolcu-tab" data-bs-toggle="tab" data-bs-target="#yolcu" type="button" role="tab"><i class="fa-solid fa-users"></i> Yolcu Girişi</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sofor-tab" data-bs-toggle="tab" data-bs-target="#sofor" type="button" role="tab"><i class="fa-solid fa-steering-wheel"></i> Şoför Girişi</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button" role="tab"><i class="fa-solid fa-building-shield"></i> Merkez Girişi</button>
+        </li>
+    </ul>
+
+    <!-- Sekme İçerikleri -->
+    <div class="tab-content" id="loginTabsContent">
+        
+        <!-- YOLCU SEKMESİ -->
+        <div class="tab-pane fade show active" id="yolcu" role="tabpanel">
+            <h4 class="text-center mb-3">Yolcu Bilgi Paneli</h4>
+            <form action="" method="post" novalidate>
+                {{ yolcu_form.hidden_tag() }}
+                <input type="hidden" name="login_type" value="yolcu">
+                <div class="mb-3">
+                    {{ yolcu_form.plaka.label(class="form-label") }}
+                    {{ yolcu_form.plaka(class="form-control bg-dark text-white border-secondary", placeholder="Örn: 06 ABC 123") }}
+                </div>
+                <div class="stButton">
+                    {{ yolcu_form.submit(class="btn") }}
+                </div>
+            </form>
+        </div>
+
+        <!-- ŞOFÖR SEKMESİ -->
+        <div class="tab-pane fade" id="sofor" role="tabpanel">
+            <h4 class="text-center mb-3">Şoför Kontrol Paneli</h4>
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <input type="hidden" name="login_type" value="sofor">
+                <div class="mb-3">
+                    {{ form.kullanici_adi.label(class="form-label") }}
+                    {{ form.kullanici_adi(class="form-control bg-dark text-white border-secondary", placeholder="Kullanıcı Adınız") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.sifre.label(class="form-label") }}
+                    {{ form.sifre(class="form-control bg-dark text-white border-secondary", placeholder="Şifreniz") }}
+                </div>
+                <div class="stButton">
+                    {{ form.submit(class="btn") }}
+                </div>
+            </form>
+        </div>
+
+        <!-- ADMİN SEKMESİ -->
+        <div class="tab-pane fade" id="admin" role="tabpanel">
+            <h4 class="text-center mb-3">Merkez Yönetim Paneli</h4>
+            <form action="" method="post">
+                <input type="hidden" name="login_type" value="admin">
+                <div class="mb-3">
+                    <label class="form-label">Kullanıcı Adı</label>
+                    <input type="text" name="kullanici_adi" class="form-control bg-dark text-white border-secondary" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Şifre</label>
+                    <input type="password" name="sifre" class="form-control bg-dark text-white border-secondary" required>
+                </div>
+                <div class="stButton">
+                    <button type="submit" class="btn">Giriş Yap</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
