@@ -1,6 +1,58 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    .star-rating {
+        font-size: 2.5rem;
+        color: #3b3e46;
+        cursor: pointer;
+        transition: color 0.2s, transform 0.2s;
+    }
+    .star-rating:hover {
+        transform: scale(1.15);
+    }
+    .star-rating.active {
+        color: #ffc107;
+        text-shadow: 0 0 15px rgba(255, 193, 7, 0.6);
+    }
+    .tag-btn {
+        border: 1px solid #3b3e46;
+        background: rgba(255, 255, 255, 0.03);
+        color: #b2b5be;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin: 5px;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    .tag-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #b2b5be;
+    }
+    .tag-btn.active {
+        background-color: #0dcaf0;
+        border-color: #0dcaf0;
+        color: #0e1117;
+        font-weight: bold;
+        box-shadow: 0 0 12px rgba(13, 202, 240, 0.4);
+    }
+    .emergency-box {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        border-radius: 8px;
+        padding: 15px;
+    }
+    .premium-card {
+        background: rgba(38, 39, 48, 0.75);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+    }
+</style>
+
 <div class="row mb-4 mt-3">
     <div class="col-12 text-end">
         <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light p-2 fw-bold">
@@ -10,22 +62,161 @@
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-6 text-center mb-5">
+    <div class="col-md-8 text-center mb-4">
         <i class="fa-solid fa-users fa-4x text-info mb-3"></i>
-        <h2 class="fw-bold">Yolcu Paneli</h2>
-        <p class="text-muted">Seyahat ettiğiniz otobüsün şoför bilgilerini aşağıda görebilirsiniz.</p>
+        <h2 class="fw-bold">Yolcu Geri Bildirim Paneli</h2>
+        <p class="text-secondary">Seyahat ettiğiniz otobüsün şoförünü değerlendirebilir ve sürüş kalitesi hakkında geri bildirim gönderebilirsiniz.</p>
     </div>
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="streamlit-container mt-0 text-center">
-            <h4 class="text-warning mb-4">Otobüs Şoförünüz</h4>
-            <div class="display-6 fw-bold text-light mb-3">{{ sofor.ad }} {{ sofor.soyad }}</div>
-            <p class="text-secondary fs-5 mb-4">Araç Plakası: <span class="badge bg-secondary fs-5">{{ sofor.arac_plaka }}</span></p>
-            <hr class="border-secondary">
-            <p class="text-muted mt-4">İyi yolculuklar dileriz. Sürüş ile ilgili bir geri bildiriminiz olursa Merkez'e iletebilirsiniz.</p>
+    <div class="col-md-8 mb-4">
+        <!-- Şoför Bilgi Kartı -->
+        <div class="streamlit-container mt-0 text-center premium-card py-4">
+            <h5 class="text-warning mb-2"><i class="fa-solid fa-steering-wheel"></i> Otobüs Şoförünüz</h5>
+            <div class="display-6 fw-bold text-light mb-2">{{ sofor.ad }} {{ sofor.soyad }}</div>
+            <p class="text-secondary fs-5 mb-0">Araç Plakası: <span class="badge bg-dark border border-secondary fs-5 text-warning">{{ sofor.arac_plaka }}</span></p>
         </div>
     </div>
 </div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 mb-4">
+        <!-- Yolcu Acil Durum / Tehlike Bildirimi -->
+        <div class="emergency-box premium-card">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <div>
+                    <h5 class="text-danger fw-bold mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Sürüş Tehlikesi mi Var?</h5>
+                    <p class="text-secondary small mb-0">Şoförün uykusuz, yorgun olduğunu düşünüyorsanız veya acil bir güvenlik riski varsa doğrudan merkez kontrol odasına alarm gönderebilirsiniz.</p>
+                </div>
+                <div>
+                    <button id="btnYolcuAcil" class="btn btn-danger fw-bold px-4 py-2"><i class="fa-solid fa-bell"></i> TEHLİKE BİLDİR</button>
+                </div>
+            </div>
+            <div id="yolcuAcilSonuc" class="mt-2 fw-bold text-center"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 mb-5">
+        <!-- Geri Bildirim Formu -->
+        <div class="streamlit-container mt-0 premium-card">
+            <h4 class="text-light mb-4 border-bottom border-secondary pb-2"><i class="fa-solid fa-square-poll-horizontal"></i> Değerlendirme Formu</h4>
+            
+            <form id="feedbackForm" action="" method="post">
+                <input type="hidden" name="puan" id="selectedPuan" value="5">
+                <input type="hidden" name="etiketler" id="selectedEtiketler" value="">
+
+                <!-- Yıldız Derecelendirme -->
+                <div class="mb-4 text-center">
+                    <label class="form-label d-block text-secondary mb-2">Şoförü Puanlayın</label>
+                    <div class="d-flex justify-content-center gap-2">
+                        <i class="fa-solid fa-star star-rating active" data-value="1"></i>
+                        <i class="fa-solid fa-star star-rating active" data-value="2"></i>
+                        <i class="fa-solid fa-star star-rating active" data-value="3"></i>
+                        <i class="fa-solid fa-star star-rating active" data-value="4"></i>
+                        <i class="fa-solid fa-star star-rating active" data-value="5"></i>
+                    </div>
+                </div>
+
+                <!-- Hazır Etiketler (Butonlar) -->
+                <div class="mb-4">
+                    <label class="form-label d-block text-secondary mb-2">Öne Çıkan Özellikler (Seçebilirsiniz)</label>
+                    <div class="text-center">
+                        <span class="tag-btn" data-tag="Çok Yolcu Vardı">🚌 Çok Yolcu Vardı</span>
+                        <span class="tag-btn" data-tag="Klima Sorunu">❄️ Klima Sorunu</span>
+                        <span class="tag-btn" data-tag="Hızlı / Tehlikeli Sürüş">🏎️ Hızlı Sürüş</span>
+                        <span class="tag-btn" data-tag="Güvenli Sürüş">🛡️ Güvenli Sürüş</span>
+                        <span class="tag-btn" data-tag="Kibar Şoför">🤝 Kibar Şoför</span>
+                        <span class="tag-btn" data-tag="Sefer Gecikmesi">🕦 Sefer Gecikmesi</span>
+                        <span class="tag-btn" data-tag="Temiz Araç">🧹 Temiz Araç</span>
+                        <span class="tag-btn" data-tag="Telefon Kullanımı">📱 Telefon Kullanımı</span>
+                    </div>
+                </div>
+
+                <!-- Serbest Yorum -->
+                <div class="mb-4">
+                    <label for="serbest_yorum" class="form-label text-secondary">Görüşleriniz ve Detaylar</label>
+                    <textarea class="form-control bg-dark text-light border-secondary" id="serbest_yorum" name="serbest_yorum" rows="4" placeholder="Şoför, sürüş kalitesi veya seyahat hakkında eklemek istediğiniz diğer detaylar..."></textarea>
+                </div>
+
+                <!-- Gönder -->
+                <div class="stButton mt-4">
+                    <button type="submit" class="btn btn-lg py-3"><i class="fa-solid fa-paper-plane"></i> Geri Bildirimi Merkeze İlet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Yıldız Puanlama Mantığı
+    const stars = document.querySelectorAll('.star-rating');
+    const selectedPuanInput = document.getElementById('selectedPuan');
+
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const val = parseInt(this.getAttribute('data-value'));
+            selectedPuanInput.value = val;
+            
+            stars.forEach((s, idx) => {
+                if (idx < val) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        });
+    });
+
+    // Hazır Etiket Seçim Mantığı
+    const tags = document.querySelectorAll('.tag-btn');
+    const selectedEtiketlerInput = document.getElementById('selectedEtiketler');
+    let selectedTags = [];
+
+    tags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            const tagName = this.getAttribute('data-tag');
+            
+            if (this.classList.contains('active')) {
+                this.classList.remove('active');
+                selectedTags = selectedTags.filter(t => t !== tagName);
+            } else {
+                this.classList.add('active');
+                selectedTags.push(tagName);
+            }
+            
+            selectedEtiketlerInput.value = selectedTags.join(', ');
+        });
+    });
+
+    // Yolcu Acil Tehlike Bildirimi
+    document.getElementById('btnYolcuAcil').addEventListener('click', function() {
+        if (!confirm('Merkez kontrol odasına ACİL ALARM gönderilecektir. Onaylıyor musunuz?')) return;
+        
+        this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> İletiliyor...';
+        this.disabled = true;
+
+        fetch('{{ url_for("main.yolcu_alarm_ekle", sofor_id=sofor.id) }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('yolcuAcilSonuc').innerHTML = '<span class="text-success fs-5"><i class="fa-solid fa-circle-check"></i> Acil Alarm Merkeze İletildi! Güvenliğiniz için gerekli aksiyonlar alınacaktır.</span>';
+            } else {
+                document.getElementById('yolcuAcilSonuc').innerHTML = '<span class="text-danger fs-5"><i class="fa-solid fa-circle-xmark"></i> Hata: Alarm iletilemedi.</span>';
+            }
+            setTimeout(() => {
+                document.getElementById('btnYolcuAcil').innerHTML = '<i class="fa-solid fa-bell"></i> TEHLİKE BİLDİR';
+                document.getElementById('btnYolcuAcil').disabled = false;
+                document.getElementById('yolcuAcilSonuc').innerHTML = '';
+            }, 5000);
+        });
+    });
+</script>
 {% endblock %}

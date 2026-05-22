@@ -70,4 +70,77 @@
         </div>
     </div>
 </div>
+
+<div class="row mt-4">
+    <div class="col-12 mb-4">
+        <div class="streamlit-container mt-0">
+            <h4 class="text-warning fw-bold mb-4"><i class="fa-solid fa-star"></i> Yolcu Geri Bildirimleri ve Değerlendirmeleri</h4>
+            
+            <div class="row">
+                {% set grouped_yorumlar = yorumlar | groupby('sofor_id') %}
+                {% for group in grouped_yorumlar %}
+                    {% set sofor = group.list[0].sofor %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="bg-dark p-4 rounded border border-secondary h-100" style="background-color: #1e2129 !important;">
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom border-secondary pb-2">
+                                <h5 class="text-info fw-bold mb-0">
+                                    <i class="fa-solid fa-user-tie"></i> {{ sofor.ad }} {{ sofor.soyad }}
+                                </h5>
+                                <span class="badge bg-warning text-dark fw-bold fs-6">{{ sofor.arac_plaka }}</span>
+                            </div>
+                            
+                            <div style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                                {% for y in group.list %}
+                                <div class="bg-dark p-3 rounded mb-3 border border-secondary" style="background-color: #16181f !important;">
+                                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+                                        <!-- Yıldız Puanı -->
+                                        <div>
+                                            {% for i in range(5) %}
+                                                {% if i < y.puan %}
+                                                    <i class="fa-solid fa-star text-warning"></i>
+                                                {% else %}
+                                                    <i class="fa-regular fa-star text-muted"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <span class="ms-1 fw-bold text-light">({{ y.puan }}/5)</span>
+                                        </div>
+                                        <small class="text-muted"><i class="fa-solid fa-clock"></i> {{ y.tarih_saat }}</small>
+                                    </div>
+                                    
+                                    <!-- Etiketler -->
+                                    {% if y.etiketler %}
+                                    <div class="mb-2">
+                                        {% for t in y.etiketler.split(', ') %}
+                                            {% if 'Hızlı' in t or 'Klima' in t or 'Çok Yolcu' in t or 'Telefon' in t %}
+                                                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 me-1 mb-1">{{ t }}</span>
+                                            {% else %}
+                                                <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 me-1 mb-1">{{ t }}</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <!-- Serbest Yorum -->
+                                    {% if y.serbest_yorum %}
+                                    <div class="p-2 rounded border-start border-3 border-info text-light" style="background: rgba(13, 202, 240, 0.05); font-style: italic;">
+                                        "{{ y.serbest_yorum }}"
+                                    </div>
+                                    {% else %}
+                                    <div class="text-muted small italic">Ekstra yorum yazılmadı.</div>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-12 text-center py-4 text-muted">
+                        <i class="fa-solid fa-face-meh fa-3x mb-3"></i>
+                        <p>Henüz yolculardan gelen herhangi bir geri bildirim bulunmuyor.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

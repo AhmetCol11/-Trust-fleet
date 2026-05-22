@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from datetime import datetime
 from app import db
 from app.main import bp
-from app.models import Sofor, Alarm, SesLog
+from app.models import Sofor, Alarm, SesLog, YolcuYorum
 
 def yorgunluk_analizi_yap(baslangic_metni: str, bitis_metni: str, baslangic_suresi: float = 1.0, bitis_suresi: float = 1.0):
     yorgunluk_kelimeleri = ["yoruldum", "yorgun", "çok yoruldum", "bitik", "halsiz", "uyku", "uyuyakaldım"]
@@ -52,9 +52,45 @@ def ses_kaydet():
     db.session.commit()
     return jsonify({"success": True})
 
-@bp.route('/yolcu/<int:sofor_id>')
+@bp.route('/yolcu/<int:sofor_id>', methods=['GET', 'POST'])
 def yolcu_panel(sofor_id):
     sofor = db.session.get(Sofor, sofor_id)
     if not sofor:
         return redirect(url_for('auth.login'))
+    
+    if request.method == 'POST':
+        puan = int(request.form.get('puan', 5))
+        etiketler = request.form.get('etiketler', '')
+        serbest_yorum = request.form.get('serbest_yorum', '')
+        simdi = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        yorum = YolcuYorum(
+            sofor_id=sofor_id,
+            puan=puan,
+            etiketler=etiketler,
+            serbest_yorum=serbest_yorum,
+            tarih_saat=simdi
+        )
+        db.session.add(yorum)
+        db.session.commit()
+        flash('Geri bildiriminiz başarıyla merkeze iletildi. Katkılarınız için teşekkür ederiz!', 'success')
+        return redirect(url_for('main.yolcu_panel', sofor_id=sofor_id))
+
     return render_template('yolcu.html', title='Yolcu Paneli', sofor=sofor)
+
+@bp.route('/api/yolcu_alarm_ekle/<int:sofor_id>', methods=['POST'])
+def yolcu_alarm_ekle(sofor_id):
+    sofor = db.session.get(Sofor, sofor_id)
+    if not sofor:
+        return jsonify({"success": False, "error": "Şoför bulunamadı"}), 404
+        
+    simdi = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    alarm = Alarm(
+        sofor_id=sofor_id, 
+        durum_bilgi="Yolcu tarafından Acil Durum/Tehlike Bildirimi yapıldı!", 
+        alarm_tipi="YOLCU ACİL ALARMI", 
+        tarih_saat=simdi
+    )
+    db.session.add(alarm)
+    db.session.commit()
+    return jsonify({"success": True})
