@@ -7,7 +7,7 @@
         <p class="text-secondary">Hoşgeldiniz, <b>{{ current_user.ad }} {{ current_user.soyad }}</b> | Araç: {{ current_user.arac_plaka }}</p>
     </div>
     <div class="col-md-3 text-end">
-        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger fw-bold">🚪 Çıkış Yap</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger fw-bold">🚪 Çıkış Yap</a>
     </div>
 </div>
 
@@ -51,7 +51,7 @@ document.getElementById('btnPanik').addEventListener('click', function() {
     this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> İLETİLİYOR...';
     this.classList.add('disabled');
     
-    fetch('{{ url_for("alarm_ekle") }}', {
+    fetch('{{ url_for("main.alarm_ekle") }}', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({sebep: 'Şoför manuel Panik Butonu tetikledi!'})
@@ -88,7 +88,7 @@ function asistanDinle() {
         const transcript = event.results[0][0].transcript;
         sonMetin.innerHTML = '🗣️ ' + transcript;
         
-        fetch('{{ url_for("ses_kaydet") }}', {
+        fetch('{{ url_for("main.ses_kaydet") }}', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({metin: transcript})
