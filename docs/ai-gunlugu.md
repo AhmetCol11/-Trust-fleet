@@ -58,4 +58,19 @@ Dönem projesi yönergesinde yer alan zorunlu teknik gereksinimlere %100 uyum sa
 5. **Kod Temizliği:** Flat yapıdan kalan artık `app/routes.py` dosyası tamamen temizlenerek proje sıfır hata ile tertemiz bir yapıya kavuşturuldu.
 
 ---
+
+## Oturum 5: Sesli Doğrulama Pop-Up'ları, Karşılaştırmalı Yorgunluk Analiz Motoru ve Yolcu Yorum Sistemi (22 Mayıs 2026)
+
+### Hedef
+Şoför vardiya sesli doğrulamaları, elle düzenleme modalı, periyodik durum konuşma döngüleri, karşılaştırmalı günlük yorgunluk analiz motoru ve interaktif yolcu değerlendirmeleri ile sistemi tamamen entegre ve eksiksiz hale getirmek.
+
+### Teknik Detaylar ve AI Katkısı
+- **Ses Doğrulama Modalı ve Elle Düzeltme:** Web Speech API tarafından algılanan metinleri şoförün doğrulaması, hataları el ile klavyeden düzenleyebilmesi için `#voiceVerifyModal` entegre edildi. Sözel geri bildirimlerin doğruluğu en üst düzeye çıkarıldı.
+- **10 Dakikalık Periyodik Ses Asistanı:** Sürüş esnasında şoföre her 10 dakikada bir otomatik ses sentezleme (`SpeechSynthesis`) ile "Nasılsınız?" ve "Yolculuk nasıl gidiyor?" soruları sorularak alınan iki aşamalı cevaplar birleştirilip yorgunluk analizine tabi tutuldu. Riskli cevaplarda acil alarm mekanizması tetiklendi.
+- **Karşılaştırmalı Yorgunluk Analiz Motoru:** Backend üzerinde şoförün shift kapanış beyanındaki kelime/harf sayısı, konuşma hızı ve uzunluğu, önceki günlerin `VardiyaSesKaydi` verileriyle karşılaştıran bir analiz motoru kuruldu. Günlük bazda yorgunluk eğilimleri saptanarak veri tabanına kaydedildi.
+- **Admin Panel Görsel Rapor Entegrasyonu:** Merkez Kontrol paneline (`admin.html`) dördüncü bir görsel bileşen eklenerek tüm şoförlerin vardiya başlangıç/bitiş ses kayıtları, yorgunluk durumları ve karşılaştırmalı detay analiz raporları listelendi.
+- **Yolcu Değerlendirme & Geri Bildirim Entegrasyonu:** Yolcu arayüzü (`yolcu.html`) yenilenerek 5 yıldızlı interaktif derecelendirme, dinamik geri bildirim etiketleri ("Hızlı Sürüş", "Klima Sorunu", "Konforlu", vb.) ve serbest yorum alanı eklendi. Admin panelinde yorumlar şoför bazlı gruplanarak listelendi.
+
+---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
+
