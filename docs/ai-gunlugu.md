@@ -72,5 +72,17 @@ Dönem projesi yönergesinde yer alan zorunlu teknik gereksinimlere %100 uyum sa
 - **Yolcu Değerlendirme & Geri Bildirim Entegrasyonu:** Yolcu arayüzü (`yolcu.html`) yenilenerek 5 yıldızlı interaktif derecelendirme, dinamik geri bildirim etiketleri ("Hızlı Sürüş", "Klima Sorunu", "Konforlu", vb.) ve serbest yorum alanı eklendi. Admin panelinde yorumlar şoför bazlı gruplanarak listelendi.
 
 ---
+
+## Oturum 6: Türkçe Negasyon İyileştirmesi, Kelime Sayısı Kalibrasyonu ve Eller Serbest Ses Gönderimi (22 Mayıs 2026)
+
+### Hedef
+Şoförlerin ses kayıtlarındaki yorgunluk analizinde hatalı tespitleri (false positive) tamamen ortadan kaldırmak, Türkçe olumsuzluk eklerini/fiillerini doğru analiz etmek ve sözel beyanları eller serbest (hands-free) şekilde otomatik iletmek.
+
+### Teknik Detaylar ve AI Katkısı
+- **Türkçe Negasyon Suffix & Kelime Filtreleri:** Türkçe dil yapısındaki fiil olumsuzlama eklerine ve yardımcı kelimelere duyarlı yeni bir kelime filtreleme sistemi entegre edildi. `"yaşamadım"`, `"hissetmiyorum"`, `"olmadı"`, `"yoktur"`, `"değildir"` gibi olumsuz cümle bitişleri algılanarak, `"yorgun"` veya `"uyku"` kelimesinin geçtiği olumlu/normal durum beyanlarında sistemin yanlışlıkla yorgun/kötü alarmı üretmesi engellendi.
+- **Karşılaştırmalı Kelime Sayısı Kalibrasyonu:** Kısa cümlelerde meydana gelen kelime sayısı oynamalarının yüzdesel olarak çok büyük sapmalar (örneğin 14 kelimeden 8 kelimeye düşüşün %42 konuşma yavaşlaması sayılması) oluşturması engellendi. Önceki günün kelime sayısı en az 15 olan durumlarda karşılaştırma yapılması ve düşüş alarm eşiğinin %30 yerine %50 olarak güncellenmesi sağlandı.
+- **Eller Serbest (Hands-free) Ses Tanıma:** Web Speech API ile entegre çalışan ses tanıma mekanizmasında şoförün konuşmayı bitirmesinden sonra 2.5 saniye boyunca sessizlik algılandığında sesli doğrulama modalının otomatik olarak onaylanıp formu göndermesi sağlandı. Böylece şoförün sürüş esnasında ekrana dokunma zorunluluğu tamamen ortadan kalktı.
+
+---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
 
