@@ -123,6 +123,27 @@ Sistemi değerlendirirken kullanabileceğiniz aktif demo hesapları aşağıda l
 
 ---
 
+## 🎥 Proje Tanıtım & Demo Videosu
+
+Uygulamanın tüm özelliklerini, şoför ses tanıma / doğrulamalarını, karşılaştırmalı yorgunluk analizi akışlarını ve merkez kontrol panelinin canlı GPS takip sistemini içeren **3-5 dakikalık tanıtım ve demo videosuna** aşağıdaki bağlantıdan erişebilirsiniz:
+*   🔗 **[YouTube veya Google Drive Video Linki Buraya Gelecek]**
+
+---
+
+## 🐳 Docker ile Hızlı Dağıtım (Deployment)
+
+Proje, öğretmenlerimizin ve test edecek kişilerin herhangi bir yerel Python ortamı veya kütüphane kurulumuyla uğraşmadan sistemi saniyeler içinde çalıştırabilmesi için tamamen Dockerize edilmiştir. 
+
+### Çalıştırma Talimatları:
+1. Bilgisayarınızda Docker Desktop uygulamasının kurulu ve çalışır durumda olduğundan emin olun.
+2. Proje ana dizininde (bu dosyanın bulunduğu klasörde) terminali açın ve şu komutu girin:
+   ```bash
+   docker-compose up --build
+   ```
+3. Docker konteyneri otomatik olarak derlenecek, SQLite veritabanı tablolarını oluşturacak ve sunucuyu başlatacaktır. Sunucu çalıştıktan sonra tarayıcınızdan **`http://localhost:5000`** adresine giderek sistemi hemen kullanmaya başlayabilirsiniz!
+
+---
+
 ## 📂 Proje Dizin Yapısı
 
 ```text
@@ -140,14 +161,19 @@ Trust-fleet/
 │   └── __init__.py             # Application Factory (create_app) Başlatıcı
 │
 ├── docs/
-│   └── ai-gunlugu.md           # Geliştirme Süreci & AI Günlüğü
+│   ├── img/                    # Uygulama Ekran Görüntüleri Klasörü
+│   ├── ai-gunlugu.md           # Geliştirme Süreci & AI Günlüğü
+│   └── rapor.md                # 1111 Kelimelik Kısa Proje Raporu
 │
 ├── database.py                 # Streamlit için Veritabanı Yardımcı Modülü
 ├── app.py                      # Alternatif Streamlit Frontend Giriş Noktası
 ├── config.py                   # Uygulama Ayarları (Secret Key vb.)
 ├── run.py                      # Flask Uygulaması Çalıştırma Dosyası
+├── Dockerfile                  # Dağıtım / Konteyner Oluşturma Dosyası
+├── docker-compose.yml          # Yerel Konteyner Orkestrasyonu Dosyası
 └── requirements.txt            # Python Paket Bağımlılıkları Listesi
 ```
 
 ---
 *Bu proje Gazi Üniversitesi öğrencisi tarafından büyük bir özveri ve en modern "Vibe Coding" standartları kullanılarak geliştirilmiştir. Güvenli yolculuklar dileriz!*
+
