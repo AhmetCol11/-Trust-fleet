@@ -110,5 +110,19 @@ Koyu cam tasarımı altında Bootstrap varsayılan renklerinin neden olduğu dü
 - **Premium Akordeon Buton Renk Uyumları:** Şoför Zaman Tüneli akordeon başlıklarındaki Bootstrap varsayılan mavi odaklanma (focus) ve aktif durum renk uyumsuzlukları koyu temayla mükemmel eşleşen sarı/neon geçişleri ile baştan yazıldı.
 
 ---
+
+## Oturum 9: Giriş Ekranı (Login) Premium Redesaynı ve Eksik İkon Sorununun Giderilmesi (23 Mayıs 2026)
+
+### Hedef
+Tarayıcıda yüklenmeyen ve FontAwesome Pro sürümüne ait olan `fa-steering-wheel` (direksiyon) ikonu nedeniyle Şoför giriş ekranında ve Yolcu geri bildirim şablonunda oluşan görsel eksikliği/boşluğu gidermek, web sitesinin ana giriş kapısı olan login ekranını tamamen modern, dinamik ve üst düzey premium bir cam tasarımı (glassmorphism) ile baştan oluşturmak.
+
+### Teknik Detaylar ve AI Katkısı
+- **Eksik İkon ve Arayüz Düzeltmeleri:** Hem `login.html` hem de `yolcu.html` üzerinde yer alan çalışmayan direksiyon ikonu, ücretsiz ve son derece uyumlu `<i class="fa-solid fa-id-card"></i>` (Şoför Kimlik Kartı) ve `👨‍✈️` (Şoför Emojisi) kombinasyonuyla güncellenerek görsel eksiklik giderildi.
+- **Dinamik Rol Tabanlı Cam Arayüzü (Glassmorphic Theme Switcher):** Login kartı, ultra saydam arka plan, modern gölgeler ve neon parlamalarla (`login-container`) kaplandı. Kart üzerine Bootstrap 5 tab geçiş olaylarını dinleyen bir JavaScript yapısı entegre edildi. Kullanıcı Yolcu (`#yolcu-tab`), Şoför (`#sofor-tab`) veya Merkez (`#admin-tab`) sekmelerinden birine tıkladığında, kartın dış çerçeve rengi ve arka neon yansıması dynamically ilgili rola ait tematik renge (Yolcu: Zümrüt Yeşili, Şoför: Amber Altın Sarısı, Merkez: Camgöbeği Mavi) pürüzsüz bir geçiş efektiyle bürünmektedir.
+- **İkonlu ve Odak Glowlu Form Kontrolleri:** Input giriş alanları modern bir form düzenine alındı. Her girdi kutusunun içine (soluna) dinamik olarak ilgili alanın ikonu yerleştirildi ve odaklanıldığında (focus) aktif rol renginde (yeşil, sarı, mavi) parlayan özel CSS odak stilleri yazıldı.
+- **Premium Buton Animasyonları:** Standart form gönderme butonları, derinliği yüksek olan gradient dolgularla ve fareyle üzerine gelindiğinde pürüzsüzce yukarı doğru esneyen hover/scale efektleriyle zenginleştirildi.
+- **Akordeon Tasarımlı Demo Giriş Bilgileri:** Sayfanın altına, test ve inceleme süreçlerini kolaylaştırmak amacıyla tıklandığında yumuşakça aşağı doğru süzülerek açılan (`collapse`) modern bir **Test & Demo Giriş Bilgileri** paneli entegre edildi. Bu sayede ilk açılıştaki kalabalık görüntü engellenerek temiz, minimal ve premium tasarım felsefesi korunmuş oldu.
+
+---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
 
