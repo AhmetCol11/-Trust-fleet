@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .login-container {
+        max-width: 550px;
+        margin: 50px auto 25px auto;
+        padding: 40px;
+        background: rgba(21, 26, 38, 0.65);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(16, 185, 129, 0.35);
+        border-radius: 24px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 40px rgba(16, 185, 129, 0.15);
+    }
+    
+    .logo-outer-wrapper {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .logo-container {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        border-color: rgba(16, 185, 129, 0.4);
+        background: rgba(16, 185, 129, 0.05);
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
+    }
+    
+    .logo-icon {
+        font-size: 2.4rem;
+        color: #10b981;
+        filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
+    }
+    
+    .input-icon-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .input-icon-group i {
+        position: absolute;
+        left: 16px;
+        font-size: 1.15rem;
+        transition: all 0.3s;
+        z-index: 10;
+        color: rgba(16, 185, 129, 0.45);
+    }
+    
+    .input-icon-group .form-control {
+        padding-left: 48px !important;
+        height: 54px;
+        border-radius: 14px;
+        background-color: rgba(10, 12, 18, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        color: #fafafa !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+    
+    .input-icon-group .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.25);
+    }
+    
+    .input-icon-group .form-control:focus {
+        border-color: #10b981 !important;
+        box-shadow: 0 0 14px rgba(16, 185, 129, 0.25) !important;
+        background-color: rgba(16, 185, 129, 0.02) !important;
+    }
+    
+    .input-icon-group .form-control:focus ~ i {
+        color: #10b981;
+    }
+    
+    .btn-premium-submit {
+        width: 100%;
+        height: 54px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: 0.5px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: none;
+        color: #fff;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 5px 15px rgba(16, 185, 129, 0.25);
+    }
+    
+    .btn-premium-submit:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(16, 185, 129, 0.35);
+    }
+</style>
+
+<div class="login-container">
+    <div class="logo-outer-wrapper">
+        <div class="logo-container border border-success">
+            <i class="fa-solid fa-lock-open logo-icon"></i>
+        </div>
+        <h2 class="fw-extrabold text-light mb-1">Yeni Şifre Belirle</h2>
+        <p class="text-secondary small">Lütfen yeni, güvenli bir şifre girin</p>
+    </div>
+
+    <form action="" method="post">
+        <div class="mb-4">
+            <label class="form-label fw-semibold text-light mb-2">Yeni Şifreniz</label>
+            <div class="input-icon-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" name="sifre" class="form-control" required placeholder="Yeni şifreniz">
+            </div>
+        </div>
+        
+        <div class="pt-2">
+            <button type="submit" class="btn-premium-submit">
+                <i class="fa-solid fa-shield-halved"></i> Şifreyi Kaydet ve Giriş Yap
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

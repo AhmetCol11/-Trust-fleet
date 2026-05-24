@@ -346,26 +346,38 @@
         <!-- YOLCU SEKMESİ -->
         <div class="tab-pane fade show active" id="yolcu" role="tabpanel">
             <div class="text-center mb-4">
-                <h4 class="fw-bold text-light mb-2">Yolcu Bilgi Girişi</h4>
-                <p class="text-secondary small">Seyahat ettiğiniz otobüsü plakasıyla anlık takip edin.</p>
+                <h4 class="fw-bold text-light mb-2">Yolcu Girişi</h4>
+                <p class="text-secondary small">Seyahatlerinizi değerlendirmek için üye girişi yapın.</p>
             </div>
             
             <form action="" method="post" novalidate>
-                {{ yolcu_form.hidden_tag() }}
                 <input type="hidden" name="login_type" value="yolcu">
                 
                 <div class="mb-4">
-                    {{ yolcu_form.plaka.label(class="form-label fw-semibold text-light mb-2") }}
+                    <label class="form-label fw-semibold text-light mb-2">E-posta Adresi</label>
                     <div class="input-icon-group">
-                        <i class="fa-solid fa-bus"></i>
-                        {{ yolcu_form.plaka(class="form-control", placeholder="Örn: 34 ABC 001") }}
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" name="yolcu_email" class="form-control" required placeholder="E-posta adresiniz">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold text-light mb-2">Şifre</label>
+                    <div class="input-icon-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" name="yolcu_sifre" class="form-control" required placeholder="Şifreniz">
                     </div>
                 </div>
                 
                 <div class="pt-2">
-                    <button type="submit" name="submit" value="Sorgula" class="btn-premium-submit btn-yolcu">
-                        <i class="fa-solid fa-compass"></i> Otobüsü Sorgula ve Giriş Yap
+                    <button type="submit" class="btn-premium-submit btn-yolcu">
+                        <i class="fa-solid fa-right-to-bracket"></i> Yolcu Girişi Yap
                     </button>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3 text-secondary small">
+                    <a href="{{ url_for('auth.yolcu_kayit') }}" class="text-success fw-bold text-decoration-none"><i class="fa-solid fa-user-plus me-1"></i> Yeni Üyelik Oluştur</a>
+                    <a href="{{ url_for('auth.yolcu_sifre_sifirla') }}" class="text-secondary text-decoration-none"><i class="fa-solid fa-circle-question me-1"></i> Şifremi Unuttum</a>
                 </div>
             </form>
         </div>
@@ -453,10 +465,14 @@
             <div class="row g-3">
                 <div class="col-md-4">
                     <h6 class="fw-bold text-success mb-2"><i class="fa-solid fa-users"></i> Yolcu Girişi</h6>
-                    <div class="small text-secondary mb-1">Sistemdeki Aktif Plakalar:</div>
-                    <span class="badge badge-custom-yolcu d-block mb-2 py-2 fs-6">34 ABC 001</span>
-                    <span class="badge badge-custom-yolcu d-block mb-2 py-2 fs-6">06 XYZ 999</span>
-                    <span class="badge badge-custom-yolcu d-block py-2 fs-6">35 DEF 777</span>
+                    <div class="small text-secondary mb-1">Kayıt Olabilir veya Kullanabilirsiniz:</div>
+                    <div class="p-2 bg-dark rounded border border-secondary mb-2 small">
+                        <span class="text-secondary">E-posta:</span> <code class="text-success">yolcu@test.com</code><br>
+                        <span class="text-secondary">Şifre:</span> <code class="text-light">yolcu123</code>
+                    </div>
+                    <div class="small text-secondary mb-1">Giriş Sonrası Aktif Plakalar:</div>
+                    <span class="badge badge-custom-yolcu d-block mb-1 py-1 fs-6">34 ABC 001</span>
+                    <span class="badge badge-custom-yolcu d-block py-1 fs-6">06 XYZ 999</span>
                 </div>
                 <div class="col-md-4">
                     <h6 class="fw-bold text-warning mb-2"><i class="fa-solid fa-id-card"></i> Şoför Girişi</h6>

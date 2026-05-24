@@ -137,7 +137,24 @@ Tarayıcıda yüklenmeyen ve FontAwesome Pro sürümüne ait olan `fa-steering-w
 - **SQLAlchemy ve Veritabanı Modifikasyonu:** `SesLog` modeline ve SQLite tablosuna `analiz_sonucu` ve `analiz_detay` alanları entegre edilerek geçmişe dönük veritabanı şeması güncellendi.
 - **Admin Arayüzü ve Görsel Zaman Tüneli:** Admin takip panelindeki (`admin.html`) Zaman Tüneli sekmesi güncellenerek periyodik logların yanında yorgunluk analiz sonuçları (İYİ, RİSKLİ, KÖTÜ) neon renkli badge'ler ve açılır detay penceresi ile görselleştirildi.
 
+## Oturum 11: Yolcu Üyelik Sistemi, Giriş Yetkilendirmesi ve E-posta Şifre Sıfırlama Entegrasyonu (24 Mayıs 2026)
+
+### Hedef
+Toplu taşıma hizmet kalitesini artıran yolcu paneli üzerinde, yolcuların anonim değil; e-posta ile kayıt olarak, güvenli giriş (login) yaptıktan sonra yorum yazabilmesini ve şifrelerini unuttuklarında token tabanlı sıfırlama talep edebilmesini sağlamak.
+
+### Teknik Detaylar ve AI Katkısı
+- **Yolcu (Passenger) Veri Modeli:** SQLite veritabanına `yolcular` tablosu (`Yolcu` modeli) eklenerek Ad Soyad, E-posta, Hashlenmiş Şifre (`sifre_hash`), Düz Metin Şifre (`sifre_plain`), Reset Token ve Son Kayıt Tarihi alanları modellendi. `YolcuYorum` tablosuna `yolcu_id` foreign key'i eklenerek veri tabanı ilişkileri güncellendi.
+- **İzole Oturum ve Korunmuş Rotalar:** Şoför/Admin oturumları ile rol çakışmalarını tamamen engellemek adına yolcu oturumları Flask'ın `session['yolcu_id']` objesiyle yönetildi. Özel `@yolcu_login_required` dekoratörü yazılarak yolcu sayfaları yetkisiz erişimlere kapatıldı.
+- **Şifre Sıfırlama Token & Demo Modu:** Yolcular için secure token tabanlı şifre sıfırlama mekanizması kurularak, akademik sunumlarda yerel testlerin yapılabilmesi amacıyla şifre sıfırlama linkinin **terminal konsoluna** yazdırılması sağlandı. Arayüzde ise hızlı erişim butonu sunuldu.
+- **Arayüz Şablonları (Premium Glassmorphism):**
+  - `login.html`: Yolcu sekmesi plaka girişinden E-posta/Şifre girişine dönüştürüldü, Üye Ol ve Şifremi Unuttum linkleri eklendi.
+  - `yolcu_kayit.html`: Yeşil neon parlamalı ve cam temalı premium kayıt ekranı oluşturuldu.
+  - `yolcu_plaka_sorgula.html`: Oturum açmış yolcunun seyahat ettiği otobüsü plaka ile sorgulayacağı şık bir sorgulama ara ekranı yapıldı.
+  - `yolcu_sifre_sifirla.html` & `yolcu_sifre_yenile.html`: Şifre sıfırlama ve yenileme form ekranları kurumsal kalitede tasarlandı.
+  - `yolcu.html` & `admin.html`: Yolcu paneli üst kısmına oturum açmış yolcunun bilgileri yerleştirildi. Admin kontrol panelinde yolcuların isimleri yorum detaylarında listelendi.
+
 ---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
+
 
 

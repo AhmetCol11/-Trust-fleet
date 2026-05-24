@@ -53,11 +53,14 @@
     }
 </style>
 
-<div class="row mb-4 mt-3">
-    <div class="col-12 text-end">
-        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light p-2 fw-bold">
-            🏠 Ana Sayfaya Dön
-        </a>
+<div class="row align-items-center mb-4 mt-3 px-3">
+    <div class="col-8">
+        <h5 class="text-secondary mb-0">Yolcu: <b>{{ session.get('yolcu_ad') }}</b></h5>
+        <small class="text-muted"><i class="fa-solid fa-envelope me-1"></i> {{ session.get('yolcu_email') }}</small>
+    </div>
+    <div class="col-4 text-end">
+        <a href="{{ url_for('main.yolcu_plaka_sorgula') }}" class="btn btn-outline-info btn-sm fw-bold me-2"><i class="fa-solid fa-compass"></i> Farklı Plaka Sorgula</a>
+        <a href="{{ url_for('auth.yolcu_logout') }}" class="btn btn-outline-danger btn-sm fw-bold"><i class="fa-solid fa-arrow-right-from-bracket"></i> Çıkış</a>
     </div>
 </div>
 

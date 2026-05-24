@@ -252,7 +252,10 @@
                                                         {% endfor %}
                                                         <span class="ms-1 fw-bold text-light small">({{ y.puan }}/5)</span>
                                                     </div>
-                                                    <small class="text-secondary"><i class="fa-solid fa-clock me-1"></i> {{ y.tarih_saat }}</small>
+                                                    <div>
+                                                        <small class="text-info fw-bold me-2"><i class="fa-solid fa-user me-1"></i> {{ y.yolcu.ad_soyad if y.yolcu else "Ziyaretçi" }}</small>
+                                                        <small class="text-secondary"><i class="fa-solid fa-clock me-1"></i> {{ y.tarih_saat }}</small>
+                                                    </div>
                                                 </div>
                                                 
                                                 <!-- Şikayet/Geri Bildirim Etiketleri -->

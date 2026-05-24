@@ -511,14 +511,14 @@ def sofor_paneli():
             st.write(f"🗣️ Algılanan Cümle: *{text}*")
             
             durum, detay = db.periyodik_yorgunluk_analizi_yap(sofor['id'], text)
-            
+            clean_detay = detay.replace('<br>', '\n')
             if durum in ["KÖTÜ", "RİSKLİ"]:
                 db.alarm_olustur(sofor['id'], f"SESLİ TEHLİKE ({durum}) | Metin: {text}", "SES_ANALİZ")
                 db.ses_logu_ekle(sofor['id'], text, durum, detay)
-                st.error(f"🚨 Tehlike/Risk Saptandı ({durum}). Alarm Geçildi!\n\nDetay: {detay.replace('<br>', '\n')}")
+                st.error(f"🚨 Tehlike/Risk Saptandı ({durum}). Alarm Geçildi!\n\nDetay: {clean_detay}")
             else:
                 db.ses_logu_ekle(sofor['id'], text, durum, detay)
-                st.success(f"✅ Uyumlu yanıt merkeze kaydedildi.\n\nDetay: {detay.replace('<br>', '\n')}")
+                st.success(f"✅ Uyumlu yanıt merkeze kaydedildi.\n\nDetay: {clean_detay}")
 
                 
             # Başarılı yanıt sonrası döngüyü kapat

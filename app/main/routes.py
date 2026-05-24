@@ -1,9 +1,10 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import render_template, flash, redirect, url_for, request, jsonify, session
 from flask_login import current_user, login_required
 from datetime import datetime
 from app import db
 from app.main import bp
 from app.models import Sofor, Alarm, SesLog, YolcuYorum, VardiyaSesKaydi
+from app.auth.routes import yolcu_login_required
 
 # Akıllı Türkçe Yorgunluk & Risk Analiz Motoru
 def yorgunluk_analiz_et(metin):
@@ -299,7 +300,25 @@ def vardiya_bitir():
         "analiz_detay": detay
     })
 
+@bp.route('/yolcu_plaka_sorgula', methods=['GET', 'POST'])
+@yolcu_login_required
+def yolcu_plaka_sorgula():
+    if request.method == 'POST':
+        plaka = request.form.get('plaka', '').strip().upper()
+        if not plaka:
+            flash('Lütfen otobüs plakasını girin.', 'danger')
+            return redirect(url_for('main.yolcu_plaka_sorgula'))
+            
+        sofor = db.session.scalar(db.select(Sofor).filter_by(arac_plaka=plaka))
+        if sofor:
+            return redirect(url_for('main.yolcu_panel', sofor_id=sofor.id))
+        else:
+            flash('Bu plakaya ait aktif bir otobüs/sefer bulunamadı.', 'danger')
+            
+    return render_template('yolcu_plaka_sorgula.html', title='Otobüs Sorgula')
+
 @bp.route('/yolcu/<int:sofor_id>', methods=['GET', 'POST'])
+@yolcu_login_required
 def yolcu_panel(sofor_id):
     sofor = db.session.get(Sofor, sofor_id)
     if not sofor:
@@ -313,6 +332,7 @@ def yolcu_panel(sofor_id):
         
         yorum = YolcuYorum(
             sofor_id=sofor_id,
+            yolcu_id=session.get('yolcu_id'),
             puan=puan,
             etiketler=etiketler,
             serbest_yorum=serbest_yorum,
@@ -326,6 +346,7 @@ def yolcu_panel(sofor_id):
     return render_template('yolcu.html', title='Yolcu Paneli', sofor=sofor)
 
 @bp.route('/api/yolcu_alarm_ekle/<int:sofor_id>', methods=['POST'])
+@yolcu_login_required
 def yolcu_alarm_ekle(sofor_id):
     sofor = db.session.get(Sofor, sofor_id)
     if not sofor:
@@ -334,7 +355,7 @@ def yolcu_alarm_ekle(sofor_id):
     simdi = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     alarm = Alarm(
         sofor_id=sofor_id, 
-        durum_bilgi="Yolcu tarafından Acil Durum/Tehlike Bildirimi yapıldı!", 
+        durum_bilgi=f"Yolcu ({session.get('yolcu_ad')}) tarafından Acil Durum/Tehlike Bildirimi yapıldı!", 
         alarm_tipi="YOLCU ACİL ALARMI", 
         tarih_saat=simdi
     )

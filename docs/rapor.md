@@ -11,7 +11,7 @@
 
 Klasik sistemlerde, şoförlerin yorgunluk ve sağlık durumları yalnızca sefer öncesi gözlemlerle ölçülebilirken; TrustFleet, tarayıcı tabanlı yapay zeka ve ses teknolojilerini kullanarak şoförlerin yorgunluk düzeylerini sürüş esnasında dinamik olarak analiz eder. Sistem üç farklı kullanıcı deneyimi grubuna hitap eder:
 *   **Şoför Paneli:** Şoförlerin ses tanıma (Web Speech API) ile vardiya başlatıp bitirdiği, sürüş esnasında 10 dakikada bir sesli asistan tarafından yorgunluk kontrolüne tabi tutulduğu ve acil durumlarda tek tıkla canlı GPS konumu gönderen "Panik Butonu"na erişebildiği güvenli arayüz.
-*   **Yolcu Geri Bildirim Paneli:** Seyahat eden yolcuların, otobüs plakasıyla şifresiz giriş yaparak şoförün sürüş kalitesini 5 yıldızlı interaktif sistemle derecelendirdiği ve şüpheli durumlarda (şoförün uyuması, tehlikeli şerit ihlali vb.) anında merkeze "Acil İhbar" gönderebildiği panel.
+*   **Yolcu Geri Bildirim Paneli:** Seyahat eden yolcuların sisteme e-posta ile kayıt olup güvenli oturum açtıktan sonra otobüs plakasını sorguladığı, şoförün sürüş kalitesini 5 yıldızlı interaktif sistemle derecelendirdiği ve şüpheli durumlarda anında merkeze "Acil İhbar" gönderebildiği panel. Şifre unutma durumları için token tabanlı e-posta şifre sıfırlama sistemi entegre edilmiştir.
 *   **Kontrol Merkezi (Merkez Yönetim Paneli):** Filodaki tüm araçların canlı konumlarını, yolcu şikayetlerini ve şoförlerin sözel yorgunluk analiz raporlarını tek ekranda toplayan, 3 sekmeli premium glassmorphic takip ekranı.
 
 ---
@@ -37,6 +37,7 @@ Uygulamada SQLite veritabanı tabloları arasındaki ilişkiler ORM standartlar�
 *   **`Sofor` - `Alarm` (One-to-Many):** Bir şoförün sürüş esnasında tetiklediği birden fazla acil durum alarmı bulunabilir.
 *   **`Sofor` - `VardiyaSesKaydi` (One-to-Many):** Şoförün vardiya başı ve sonu yaptığı karşılaştırmalı sesli kelime analiz kayıtları şoför kimliğiyle eşleştirilir.
 *   **`Sofor` - `YolcuYorum` (One-to-Many):** Yolcuların şoförlere yönelik gönderdiği 5 yıldızlı puanlamalar ve şikayet etiketleri şoför bazlı gruplanır.
+*   **`Yolcu` - `YolcuYorum` (One-to-Many):** Yolcuların sisteme üye olduktan sonra bıraktığı tüm geri bildirim ve puanlar, yolcu kimliği üzerinden veritabanında güvenle ilişkilendirilir.
 
 ---
 

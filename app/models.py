@@ -109,28 +109,56 @@ class VardiyaSesKaydi(db.Model):
             "tarih_saat": self.tarih_saat
         }
 
+class Yolcu(db.Model):
+    __tablename__ = 'yolcular'
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    ad_soyad: Mapped[str] = mapped_column(String(100), nullable=False)
+    email: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
+    sifre_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    sifre_plain: Mapped[Optional[str]] = mapped_column(String(255))
+    kayit_tarihi: Mapped[str] = mapped_column(String(50), nullable=False, default=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    reset_token: Mapped[Optional[str]] = mapped_column(String(100))
+    reset_token_expiry: Mapped[Optional[str]] = mapped_column(String(50))
+
+    yorumlar: Mapped[List["YolcuYorum"]] = relationship(back_populates="yolcu")
+
+    def check_password(self, password):
+        return self.sifre_hash == hashlib.sha256(password.encode()).hexdigest()
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "ad_soyad": self.ad_soyad,
+            "email": self.email,
+            "kayit_tarihi": self.kayit_tarihi
+        }
+
 class YolcuYorum(db.Model):
     __tablename__ = 'yolcu_yorumlari'
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     sofor_id: Mapped[int] = mapped_column(ForeignKey('soforler.id'), nullable=False)
+    yolcu_id: Mapped[Optional[int]] = mapped_column(ForeignKey('yolcular.id'), nullable=True)
     puan: Mapped[int] = mapped_column(Integer, nullable=False)
     etiketler: Mapped[Optional[str]] = mapped_column(Text)
     serbest_yorum: Mapped[Optional[str]] = mapped_column(Text)
     tarih_saat: Mapped[str] = mapped_column(String(50), nullable=False, default=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     sofor: Mapped["Sofor"] = relationship(back_populates="yorumlar")
+    yolcu: Mapped[Optional["Yolcu"]] = relationship(back_populates="yorumlar")
 
     def to_dict(self):
         return {
             "id": self.id,
             "sofor_id": self.sofor_id,
             "sofor_adi": f"{self.sofor.ad} {self.sofor.soyad}" if self.sofor else "",
+            "yolcu_adi": self.yolcu.ad_soyad if self.yolcu else "Ziyaretçi",
             "arac_plaka": self.sofor.arac_plaka if self.sofor else "",
             "puan": self.puan,
             "etiketler": self.etiketler,
             "serbest_yorum": self.serbest_yorum,
             "tarih_saat": self.tarih_saat
         }
+
 
 class AracKonum(db.Model):
     __tablename__ = 'arac_konumlari'
