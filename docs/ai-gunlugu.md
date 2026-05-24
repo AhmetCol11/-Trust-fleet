@@ -123,6 +123,21 @@ Tarayıcıda yüklenmeyen ve FontAwesome Pro sürümüne ait olan `fa-steering-w
 - **Premium Buton Animasyonları:** Standart form gönderme butonları, derinliği yüksek olan gradient dolgularla ve fareyle üzerine gelindiğinde pürüzsüzce yukarı doğru esneyen hover/scale efektleriyle zenginleştirildi.
 - **Akordeon Tasarımlı Demo Giriş Bilgileri:** Sayfanın altına, test ve inceleme süreçlerini kolaylaştırmak amacıyla tıklandığında yumuşakça aşağı doğru süzülerek açılan (`collapse`) modern bir **Test & Demo Giriş Bilgileri** paneli entegre edildi. Bu sayede ilk açılıştaki kalabalık görüntü engellenerek temiz, minimal ve premium tasarım felsefesi korunmuş oldu.
 
+## Oturum 10: Periyodik Sürüş Konuşmalarında Karşılaştırmalı Yorgunluk Analiz Motorunun Entegrasyonu (24 Mayıs 2026)
+
+### Hedef
+Şoförlerin sürüş esnasında 10 dakikada bir yaptığı sesli asistan görüşmelerini (periyodik kontrol) analiz etmek; bu analizleri şoförün vardiya başlangıç sözel beyanı ve önceki periyodik kontrollerinin ortalama kelime uzunluğu ile kıyaslayan akıllı karşılaştırma motorunu kurmak.
+
+### Teknik Detaylar ve AI Katkısı
+- **Karşılaştırmalı Periyodik Analiz Motoru:** Hem Flask backend (`app/main/routes.py` üzerinde `periyodik_analiz_ve_karsilastirma_yap`) hem de Streamlit veritabanı katmanında (`database.py` üzerinde `periyodik_yorgunluk_analizi_yap`) karşılaştırmalı analiz motorları geliştirildi.
+- **Çok Kriterli Risk Analizi:**
+  - **Kelime Bazlı:** Konuşmada yorgunluk belirten kelimeler (`yoruldum`, `uyku`, vb.) Türkçe olumsuzluk ekleri (`değilim`, `sorun yok`) hesaba katılarak analiz edildi.
+  - **Vardiya Girişi ile Kıyaslama:** Şoförün mevcut periyodik kontrol kelime sayısı, vardiya başlangıcındaki kelime sayısına kıyasla %50'den fazla azaldığında `RİSKLİ` olarak işaretlendi.
+  - **Giriş Geçmişi ile Kıyaslama:** Mevcut konuşma uzunluğu, son 3 periyodik konuşmanın kelime sayısının ortalamasına kıyasla %50'den fazla düştüğünde yorgunluk ve dikkat dağınıklığı tespiti ile `RİSKLİ` alarmı üretildi.
+- **SQLAlchemy ve Veritabanı Modifikasyonu:** `SesLog` modeline ve SQLite tablosuna `analiz_sonucu` ve `analiz_detay` alanları entegre edilerek geçmişe dönük veritabanı şeması güncellendi.
+- **Admin Arayüzü ve Görsel Zaman Tüneli:** Admin takip panelindeki (`admin.html`) Zaman Tüneli sekmesi güncellenerek periyodik logların yanında yorgunluk analiz sonuçları (İYİ, RİSKLİ, KÖTÜ) neon renkli badge'ler ve açılır detay penceresi ile görselleştirildi.
+
 ---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
+
 
