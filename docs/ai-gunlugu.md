@@ -189,6 +189,22 @@ Fiziksel GPS donanım gereksinimini yazılımsal simülasyonla aşarak, otobüsl
 - **Sayfa Yenilenmeden AJAX Canlı Güncelleme:** Sayfaya eklenen JavaScript motoru yardımıyla her 5 saniyede bir Flask API'si (`/api/admin/konumlar`) otomatik sorgulanarak aktif otobüslerin konumları harita üzerinde pürüzsüzce kaydırıldı. Otobüs ikonlarına tıklandığında plaka, şoför adı ve son güncelleme zamanını gösteren popup pencereleri tasarlandı. haritanın altına KVKK yasal uyarı notu yerleştirildi.
 
 ---
+
+## Oturum 15: Konum Bazlı Sesli Doğrulama ve Güzergah Entegrasyonu (24 Mayıs 2026)
+
+### Hedef
+Şoförlerin yaptığı her sesli kontrolün, vardiya başlatma/bitirme işlemlerinin ve periyodik durum beyanlarının hangi konumdan (enlem/boylam koordinatları ile) yapıldığını tespit edip kayıt altına almak, bu verileri Merkez Yönetim Paneli (`admin.html`) üzerindeki Zaman Tüneli akordeonlarında görselleştirmek.
+
+### Teknik Detaylar ve AI Katkısı
+- **Veritabanı Şeması Göçü (Migration):** SQLite veritabanındaki `ses_loglari` ve `vardiya_ses_kayitlari` tablolarına `konum` (VARCHAR(100)) sütunu eklendi. Geliştirilen python göç scripti ile veritabanı bütünlüğü korunarak bu alanlar sorunsuz şekilde entegre edildi.
+- **SQLAlchemy Model Güncellemesi (`app/models.py`):** `SesLog` ve `VardiyaSesKaydi` modellerine `konum` alanları (Mapped[Optional[str]]) eklendi ve `to_dict()` metotları bu yeni alanları serialize edecek şekilde güncellendi.
+- **API ve Akış Entegrasyonu (`app/main/routes.py`):**
+  - Sürücülerin anlık konumunu `AracKonum` tablosundan koordinat formatında (örn: "39.9208, 32.8541") çeken `su_anki_sofor_konumu` yardımcı fonksiyonu yazıldı.
+  - `/api/ses_kaydet`, `/api/vardiya_baslat` ve `/api/vardiya_bitir` rotalarında ses verileri işlenirken eşzamanlı olarak şoförün en son aktif koordinatı sorgulandı ve ilgili kaydın `konum` alanına işlenerek veritabanına kaydedilmesi sağlandı.
+  - Periyodik durum analizi riskli (`RİSKLİ` veya `KÖTÜ`) saptadığında merkez panele gönderilen otomatik **Asistan Alarmı** metninin içerisine şoförün o anki konum bilgisi de dahil edildi (örn: `"| Konum: 39.9208, 32.8541"`).
+- **Zaman Tüneli Premium Arayüz Güncellemesi (`admin.html`):** Merkez Takip Ekranındaki Şoför Zaman Tüneli'nde (`admin.html` "Zaman Tüneli & Ses Kayıtları" sekmesi), hem **Vardiya Giriş/Çıkış Raporları** hem de **Periyodik Sürüş Konuşmaları** kronolojik listesindeki her zaman damgasının yanına şoförün o anki konum koordinatını kırmızı renkte yanıp sönen bir konum rozeti (`badge badge-custom-dark text-danger`) ve zıplayan harita pini ikonu (`fa-location-dot fa-bounce`) ile entegre edildi. Bu sayede merkez operatörünün hangi ses kaydının tam olarak nereden yapıldığını anında görmesi sağlandı.
+
+---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
 
 

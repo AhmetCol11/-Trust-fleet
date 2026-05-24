@@ -69,6 +69,7 @@ class SesLog(db.Model):
     metin: Mapped[str] = mapped_column(Text, nullable=False)
     analiz_sonucu: Mapped[Optional[str]] = mapped_column(String(50))
     analiz_detay: Mapped[Optional[str]] = mapped_column(Text)
+    konum: Mapped[Optional[str]] = mapped_column(String(100))
 
     sofor: Mapped["Sofor"] = relationship(back_populates="ses_loglari")
     
@@ -80,7 +81,8 @@ class SesLog(db.Model):
             "tarih_saat": self.tarih_saat,
             "metin": self.metin,
             "analiz_sonucu": self.analiz_sonucu,
-            "analiz_detay": self.analiz_detay
+            "analiz_detay": self.analiz_detay,
+            "konum": self.konum
         }
 
 
@@ -93,6 +95,7 @@ class VardiyaSesKaydi(db.Model):
     analiz_sonucu: Mapped[str] = mapped_column(String(50), nullable=False)
     analiz_detay: Mapped[Optional[str]] = mapped_column(Text)
     tarih_saat: Mapped[str] = mapped_column(String(50), nullable=False, default=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    konum: Mapped[Optional[str]] = mapped_column(String(100))
 
     sofor: Mapped["Sofor"] = relationship(back_populates="vardiya_kayitlari")
 
@@ -106,7 +109,8 @@ class VardiyaSesKaydi(db.Model):
             "bitis_metni": self.bitis_metni,
             "analiz_sonucu": self.analiz_sonucu,
             "analiz_detay": self.analiz_detay,
-            "tarih_saat": self.tarih_saat
+            "tarih_saat": self.tarih_saat,
+            "konum": self.konum
         }
 
 class Yolcu(db.Model):

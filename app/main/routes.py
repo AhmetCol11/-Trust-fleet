@@ -198,6 +198,13 @@ def alarm_ekle():
     db.session.commit()
     return jsonify({"success": True})
 
+def su_anki_sofor_konumu(sofor_id):
+    from app.models import AracKonum
+    k = db.session.get(AracKonum, sofor_id)
+    if k and (k.enlem != 0.0 or k.boylam != 0.0):
+        return f"{k.enlem:.4f}, {k.boylam:.4f}"
+    return "Bilinmiyor"
+
 @bp.route('/api/ses_kaydet', methods=['POST'])
 @login_required
 def ses_kaydet():
@@ -208,12 +215,16 @@ def ses_kaydet():
     # Yeni karşılaştırmalı durum ve yorgunluk analizi
     durum, detay = periyodik_analiz_ve_karsilastirma_yap(current_user.id, metin)
     
+    # Sürücünün anlık konumunu çek
+    konum_str = su_anki_sofor_konumu(current_user.id)
+    
     log = SesLog(
         sofor_id=current_user.id, 
         metin=metin, 
         tarih_saat=simdi,
         analiz_sonucu=durum,
-        analiz_detay=detay
+        analiz_detay=detay,
+        konum=konum_str
     )
     db.session.add(log)
     
@@ -230,7 +241,7 @@ def ses_kaydet():
         
         alarm = Alarm(
             sofor_id=current_user.id,
-            durum_bilgi=f"Akıllı asistan periyodik kontrol risk ({durum}) saptadı: '{clean_msg[:120]}'",
+            durum_bilgi=f"Akıllı asistan periyodik kontrol risk ({durum}) saptadı: '{clean_msg[:120]}' | Konum: {konum_str}",
             alarm_tipi="ASİSTAN ALARMI",
             tarih_saat=simdi
         )
@@ -253,12 +264,16 @@ def vardiya_baslat():
     metin = data.get('metin', '')
     simdi = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
+    # Sürücünün anlık konumunu çek
+    konum_str = su_anki_sofor_konumu(current_user.id)
+    
     shift = VardiyaSesKaydi(
         sofor_id=current_user.id,
         baslangic_metni=metin,
         analiz_sonucu="BAŞLATILDI",
         analiz_detay="Vardiya başlangıç kaydı alındı. Gün içi kontroller bekleniyor.",
-        tarih_saat=simdi
+        tarih_saat=simdi,
+        konum=konum_str
     )
     db.session.add(shift)
     db.session.commit()
@@ -270,6 +285,9 @@ def vardiya_bitir():
     data = request.json
     metin = data.get('metin', '')
     simdi = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Sürücünün anlık konumunu çek
+    konum_str = su_anki_sofor_konumu(current_user.id)
     
     # Şoförün son aktif vardiya kaydını bul
     shift = db.session.scalar(
@@ -284,11 +302,13 @@ def vardiya_bitir():
             baslangic_metni="Vardiya başlangıcında ses kaydı alınamadı.",
             analiz_sonucu="TAMAMLANDI",
             analiz_detay="Başlangıç kaydı olmadan bitirildi.",
-            tarih_saat=simdi
+            tarih_saat=simdi,
+            konum=konum_str
         )
         db.session.add(shift)
         
     shift.bitis_metni = metin
+    shift.konum = konum_str
     durum, detay = analiz_ve_karsilastirma_yap(current_user.id, shift.baslangic_metni, metin)
     shift.analiz_sonucu = durum
     shift.analiz_detay = detay
