@@ -2,5 +2,22 @@
     "python.defaultInterpreterPath": "${workspaceFolder}/venv/Scripts/python.exe",
     "python.analysis.extraPaths": [
         "${workspaceFolder}/venv/Lib/site-packages"
-    ]
+    ],
+    "editor.unicodeHighlight.allowedCharacters": {
+        "ı": true,
+        "ç": true,
+        "ğ": true,
+        "ş": true,
+        "ö": true,
+        "ü": true,
+        "İ": true,
+        "Ğ": true,
+        "Ş": true,
+        "Ö": true,
+        "Ü": true
+    },
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportCallIssue": "none",
+        "reportGeneralTypeIssues": "none"
+    }
 }
