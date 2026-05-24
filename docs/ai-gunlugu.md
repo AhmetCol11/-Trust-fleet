@@ -153,6 +153,17 @@ Toplu taşıma hizmet kalitesini artıran yolcu paneli üzerinde, yolcuların an
   - `yolcu_sifre_sifirla.html` & `yolcu_sifre_yenile.html`: Şifre sıfırlama ve yenileme form ekranları kurumsal kalitede tasarlandı.
   - `yolcu.html` & `admin.html`: Yolcu paneli üst kısmına oturum açmış yolcunun bilgileri yerleştirildi. Admin kontrol panelinde yolcuların isimleri yorum detaylarında listelendi.
 
+
+## Oturum 12: Otobüs Sorgulama Panelinde Demo/Aktif Plakaların İnteraktif Gösterimi (24 Mayıs 2026)
+
+### Hedef
+Yolcu paneli otobüs sorgulama ekranında, testlerin ve akademik sunumların daha akıcı yapılabilmesi için veritabanında kayıtlı tüm aktif/kayıtlı otobüs plakalarının listelenmesi ve tek tıkla otomatik doldurulmasını sağlamak.
+
+### Teknik Detaylar ve AI Katkısı
+- **Dinamik Veri Entegrasyonu:** `/yolcu_plaka_sorgula` rotası (`app/main/routes.py`) güncellenerek veritabanındaki tüm `Sofor` (aktif seferdeki otobüsler) nesneleri çekildi ve sorgulama şablonuna iletildi.
+- **Glassmorphic Arayüz Koruması:** Mevcut şık kart yapısını bozmamak için, sorgulama formunun altına `.badge-plaka` sınıfı ile yeşil neon gölgeli ve üzerine gelindiğinde parlayan esnek rozetler eklendi.
+- **Tek Tıkla Seçim (Auto-Fill & Glow Effect):** Yazılan `selectPlaka(plaka)` JavaScript fonksiyonu ile butona tıklandığında plaka anında girdi kutusuna aktarılarak hafif bir yeşil parıldama animasyonu (`plaka-glow`) tetiklendi ve kutuya odaklanma (focus) sağlandı.
+
 ---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
 

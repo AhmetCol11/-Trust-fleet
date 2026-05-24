@@ -315,7 +315,8 @@ def yolcu_plaka_sorgula():
         else:
             flash('Bu plakaya ait aktif bir otobüs/sefer bulunamadı.', 'danger')
             
-    return render_template('yolcu_plaka_sorgula.html', title='Otobüs Sorgula')
+    soforler = db.session.scalars(db.select(Sofor)).all()
+    return render_template('yolcu_plaka_sorgula.html', title='Otobüs Sorgula', soforler=soforler)
 
 @bp.route('/yolcu/<int:sofor_id>', methods=['GET', 'POST'])
 @yolcu_login_required
