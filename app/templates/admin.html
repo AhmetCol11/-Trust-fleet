@@ -156,6 +156,11 @@
     .text-light-50 {
         color: rgba(255, 255, 255, 0.65) !important;
     }
+    
+    #map {
+        background: rgba(10, 12, 18, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
 </style>
 
 <div class="row align-items-center mb-4 mt-3">
@@ -167,6 +172,9 @@
         <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger fw-bold border-2 px-3 py-2"><i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Panelden Çıkış</a>
     </div>
 </div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <!-- Tab Seçenekleri -->
 <ul class="nav nav-pills nav-justified mb-4 p-2 rounded shadow-lg" id="adminTabs" role="tablist">
@@ -182,7 +190,12 @@
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-bold py-3 border-0" id="voice-tab" data-bs-toggle="tab" data-bs-target="#voicePanel" type="button" role="tab" aria-controls="voicePanel" aria-selected="false">
-            <i class="fa-solid fa-wave-square me-2"></i> Şoför Ses Kayıtları (Zaman Tüneli)
+            <i class="fa-solid fa-wave-square me-2"></i> Şoför Ses Kayıtları
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold py-3 border-0" id="map-tab" data-bs-toggle="tab" data-bs-target="#mapPanel" type="button" role="tab" aria-controls="mapPanel" aria-selected="false">
+            <i class="fa-solid fa-map-location-dot me-2 text-danger"></i> 🗺️ Canlı GPS Harita Takibi
         </button>
     </li>
 </ul>
@@ -544,6 +557,117 @@
             </div>
         </div>
     </div>
+
+    <!-- PANEL 4: Canlı Harita Takibi (Leaflet.js & OpenStreetMap) -->
+    <div class="tab-pane fade" id="mapPanel" role="tabpanel" aria-labelledby="map-tab">
+        <div class="card admin-card p-4">
+            <h4 class="text-info fw-bold mb-3"><i class="fa-solid fa-map-location-dot me-2 text-danger"></i> Canlı Filo Takip Haritası</h4>
+            <p class="text-secondary small mb-4">Aktif seferdeki tüm otobüslerin canlı GPS konumlarını aşağıdaki harita üzerinde gerçek zamanlı olarak takip edebilirsiniz. Harita her 5 saniyede bir otomatik olarak yenilenir.</p>
+            
+            <!-- Map Container -->
+            <div id="map" class="rounded shadow-lg border border-secondary border-opacity-25" style="height: 500px; z-index: 1;"></div>
+            
+            <!-- KVKK Uyarısı -->
+            <div class="mt-3 p-3 bg-dark bg-opacity-25 rounded border border-secondary border-opacity-10 d-flex align-items-center justify-content-between flex-wrap gap-2 text-muted small">
+                <span><i class="fa-solid fa-circle-info text-info me-2"></i> <b>KVKK ve Veri Güvenliği Standardı:</b> Bu harita, şirket mülkiyetindeki ticari araçların (otobüs) güvenliğini sağlamak amacıyla konum verilerini takip etmektedir. Yolcuların kişisel hareketleri kesinlikle izlenmez.</span>
+                <span class="badge badge-custom-info"><i class="fa-solid fa-shield-check me-1"></i> KVKK Uyumlu</span>
+            </div>
+        </div>
+    </div>
     
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var map;
+    var markers = {};
+
+    // Harita sekmesi açıldığında Leaflet haritasını yeniden boyutlandır
+    document.getElementById('map-tab').addEventListener('shown.bs.tab', function () {
+        if (!map) {
+            initMap();
+        } else {
+            map.invalidateSize();
+        }
+    });
+
+    function initMap() {
+        // Ankara merkezli harita başlat (Kazan ile Ankara arasını kapsayacak şekilde)
+        map = L.map('map').setView([40.10, 32.70], 10);
+        
+        // OpenStreetMap katmanını ekle
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // İlk konum verilerini çek
+        guncelleHaritaKonumlari();
+        
+        // Her 5 saniyede bir konumları güncelle
+        setInterval(guncelleHaritaKonumlari, 5000);
+    }
+
+    function guncelleHaritaKonumlari() {
+        fetch('/api/admin/konumlar')
+            .then(response => response.json())
+            .then(res => {
+                if (res.success && res.data) {
+                    var activeIds = [];
+                    
+                    res.data.forEach(function(item) {
+                        if (item.enlem === 0 && item.boylam === 0) return; // Geçersiz konumu geç
+                        
+                        var id = item.sofor_id;
+                        activeIds.push(id);
+                        
+                        var lat = item.enlem;
+                        var lng = item.boylam;
+                        
+                        // Detaylı popup içeriği
+                        var popupContent = `
+                            <div class="p-2" style="font-family: 'Plus Jakarta Sans', sans-serif; color: #111;">
+                                <h6 class="fw-bold mb-1" style="font-size: 0.95rem;"><i class="fa-solid fa-bus text-success me-2"></i>${item.arac_plaka}</h6>
+                                <p class="mb-2 small text-muted">Şoför: <b>${item.sofor_adi}</b></p>
+                                <hr class="my-2" style="border-top: 1px solid #ddd;" />
+                                <div class="small mb-1">📍 Enlem: <b>${lat.toFixed(4)}</b></div>
+                                <div class="small mb-1">📍 Boylam: <b>${lng.toFixed(4)}</b></div>
+                                <div class="small text-muted mt-2" style="font-size: 0.75rem;"><i class="fa-solid fa-clock me-1"></i> Güncelleme: ${item.son_guncelleme}</div>
+                            </div>
+                        `;
+                        
+                        if (markers[id]) {
+                            // Marker zaten var, konumunu pürüzsüzce kaydır
+                            markers[id].setLatLng([lat, lng]);
+                            markers[id].setPopupContent(popupContent);
+                        } else {
+                            // Yeni marker ekle (Özel kırmızı ikonla)
+                            var redIcon = L.icon({
+                                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34],
+                                shadowSize: [41, 41]
+                            });
+                            
+                            markers[id] = L.marker([lat, lng], {icon: redIcon})
+                                .addTo(map)
+                                .bindPopup(popupContent);
+                        }
+                    });
+                    
+                    // Eski/aktif olmayan marker'ları temizle
+                    for (var id in markers) {
+                        if (!activeIds.includes(parseInt(id))) {
+                            map.removeLayer(markers[id]);
+                            delete markers[id];
+                        }
+                    }
+                }
+            })
+            .catch(err => console.error("Harita verisi güncellenemedi:", err));
+    }
+</script>
 {% endblock %}

@@ -176,6 +176,18 @@ Yolcu paneli otobüs sorgulama ekranında, testlerin ve akademik sunumların dah
 - **SQLite Tabanlı Zaman Sınırlaması (10 Dakikalık Spam Koruması):** Yolcu değerlendirme postası alındığında (`app/main/routes.py` üzerindeki `/yolcu/<sofor_id>` rotasında), veritabanından ilgili `yolcu_id`ye ait en son `YolcuYorum` tarihi sorgulandı. 
 - **Dinamik Geri Sayım & Flask Flash Uyarısı:** Son yorumun üzerinden geçen süre hesaplanarak 10 dakikadan az ise işlem durdurulup yolcuya *"Spam engelleme aktif! Lütfen yeni bir değerlendirme göndermek için X dakika bekleyin."* uyarısı şık bir kırmızı alert (`danger`) ile ekrana yansıtıldı.
 
+
+## Oturum 14: Canlı Rota Simülatörü (Ankara-Kazan Otoyolu) ve Leaflet.js İnteraktif Harita Entegrasyonu (24 Mayıs 2026)
+
+### Hedef
+Fiziksel GPS donanım gereksinimini yazılımsal simülasyonla aşarak, otobüslerin Ankara-Kazan güzergahında canlı seyahatlerini simüle etmek ve bu hareketleri Merkez Yönetim Paneli'nde (Flask) gerçek bir harita (Leaflet.js) üzerinde sayfa yenilenmeden canlı izlemek.
+
+### Teknik Detaylar ve AI Katkısı
+- **Canlı Rota Simülatörü (Streamlit - `app.py`):** Şoför paneline *"Canlı Rota Seyahat Simülasyonunu Başlat"* seçeneği eklendi. AŞTİ Terminali'nden yola çıkıp Kazan Gazi Üniversitesi MYO Kampüsü'ne varan 9 adımdan oluşan gerçek otoyol koordinatları (enlem/boylam dizisi) sisteme tanımlandı. Şoförün duraklar arasında manuel veya otomatik olarak ilerleyebilmesi sağlandı.
+- **Geriye Dönük Uyumluluk Koruması:** Simülasyon kapalı olduğunda, şoförün sabit konumlarını listeden seçtiği klasik mekanizmaya pürüzsüzce geri dönmesi sağlanarak sistem stabilitesi korundu.
+- **Leaflet.js Harita Entegrasyonu (Flask - `admin.html`):** Merkez Yönetim Paneline OpenStreetMap altyapısıyla çalışan, CDN üzerinden yüklenen **Leaflet.js** modülü entegre edildi. 4. bir sekme olarak *"🗺️ Canlı GPS Harita Takibi"* paneli ve glassmorphic `#map` konteyneri eklendi.
+- **Sayfa Yenilenmeden AJAX Canlı Güncelleme:** Sayfaya eklenen JavaScript motoru yardımıyla her 5 saniyede bir Flask API'si (`/api/admin/konumlar`) otomatik sorgulanarak aktif otobüslerin konumları harita üzerinde pürüzsüzce kaydırıldı. Otobüs ikonlarına tıklandığında plaka, şoför adı ve son güncelleme zamanını gösteren popup pencereleri tasarlandı. haritanın altına KVKK yasal uyarı notu yerleştirildi.
+
 ---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
 

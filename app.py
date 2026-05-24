@@ -349,21 +349,58 @@ def sofor_paneli():
             st.session_state.son_otomatik_kontrol = simdi
             st.rerun()
 
-    # ── KONUM BİLGİSİ ──
-    konumlar = ["Bilinmiyor", "Ana Kampüs", "Şehir Merkezi", "Otogar", "AŞTİ"]
-    secilen_konum = st.selectbox("📍 Mevcut Konumunuz:", konumlar)
+    # ── KONUM BİLGİSİ VE CANLI YOLCULUK SİMÜLASYONU ──
+    st.markdown("### 🗺️ Araç Canlı Konum Bilgisi")
     
-    # Seçilen konuma göre sanal GPS koordinatları belirle ve veritabanına kaydet
-    konum_koordinatlari = {
-        "Ana Kampüs": (39.9382, 32.8223),
-        "Şehir Merkezi": (39.9208, 32.8541),
-        "Otogar": (39.9180, 32.8120),
-        "AŞTİ": (39.9180, 32.8120)
-    }
+    # Ankara-Kazan Otoyolu Rota Koordinatları
+    rota_noktalari = [
+        {"isim": "AŞTİ Şehirlerarası Terminali (Başlangıç)", "enlem": 39.9180, "boylam": 32.8120},
+        {"isim": "Ankapark & Akköprü Mevkii", "enlem": 39.9548, "boylam": 32.8315},
+        {"isim": "İstanbul Yolu Yenimahalle", "enlem": 39.9702, "boylam": 32.8020},
+        {"isim": "Batıkent Kavşağı", "enlem": 39.9650, "boylam": 32.7210},
+        {"isim": "Eryaman Girişi", "enlem": 39.9880, "boylam": 32.6510},
+        {"isim": "Göksu Parkı Dinlenme Tesisleri", "enlem": 39.9980, "boylam": 32.6360},
+        {"isim": "Saray Sanayi Bölgesi", "enlem": 40.0980, "boylam": 32.6650},
+        {"isim": "Kahramankazan Girişi", "enlem": 40.1850, "boylam": 32.6780},
+        {"isim": "Gazi Üniversitesi TUSAŞ Kazan MYO (Varış)", "enlem": 40.2315, "boylam": 32.6845}
+    ]
+
+    simulasyon_aktif = st.checkbox("🚌 Canlı Rota Seyahat Simülasyonunu Başlat", value=False)
+    secilen_konum = "Bilinmiyor"
     
-    if secilen_konum in konum_koordinatlari:
-        enlem, boylam = konum_koordinatlari[secilen_konum]
+    if simulasyon_aktif:
+        if "rota_index" not in st.session_state:
+            st.session_state.rota_index = 0
+            
+        col_prev, col_next = st.columns([1, 1])
+        with col_prev:
+            if st.button("⏪ Önceki Durak", use_container_width=True):
+                st.session_state.rota_index = max(0, st.session_state.rota_index - 1)
+        with col_next:
+            if st.button("⏩ Sonraki Durak (Yol Al)", use_container_width=True):
+                st.session_state.rota_index = min(len(rota_noktalari) - 1, st.session_state.rota_index + 1)
+                
+        akademik_konum = rota_noktalari[st.session_state.rota_index]
+        secilen_konum = akademik_konum["isim"]
+        enlem = akademik_konum["enlem"]
+        boylam = akademik_konum["boylam"]
+        
+        st.success(f"📍 **Canlı Seyahat Noktası:** {secilen_konum}\n\n*Koordinatlar: {enlem}, {boylam}*")
         db.konum_guncelle(sofor['id'], enlem, boylam)
+        
+    else:
+        # Geriye dönük tam uyumluluk: Sabit konumlar
+        konumlar = ["Bilinmiyor", "Ana Kampüs", "Şehir Merkezi", "Otogar", "AŞTİ"]
+        secilen_konum = st.selectbox("📍 Mevcut Sabit Konumunuz:", konumlar)
+        konum_koordinatlari = {
+            "Ana Kampüs": (39.9382, 32.8223),
+            "Şehir Merkezi": (39.9208, 32.8541),
+            "Otogar": (39.9180, 32.8120),
+            "AŞTİ": (39.9180, 32.8120)
+        }
+        if secilen_konum in konum_koordinatlari:
+            enlem, boylam = konum_koordinatlari[secilen_konum]
+            db.konum_guncelle(sofor['id'], enlem, boylam)
 
     # Asıl Panik Butonu
     if st.button("🚨 MANUEL PANİK BUTONU 🚨", use_container_width=True):
