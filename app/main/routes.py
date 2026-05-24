@@ -103,6 +103,76 @@ def analiz_ve_karsilastirma_yap(sofor_id, baslangic, bitis):
         
     return durum, "\n".join(detaylar)
 
+# Periyodik Yorgunluk & Tepki Analiz Motoru
+def periyodik_analiz_ve_karsilastirma_yap(sofor_id, metin):
+    import re
+    
+    # 1. Metni ayrıştır ve temizle ("Soru 1: ... | Soru 2: ...")
+    m = re.search(r"Soru 1:\s*(.*?)\s*\|\s*Soru 2:\s*(.*)", metin)
+    if m:
+        clean_text = m.group(1).strip() + " " + m.group(2).strip()
+    else:
+        clean_text = metin.strip()
+        
+    periyodik_kelime_sayisi = len(clean_text.split())
+    
+    # 2. Kelime bazlı yorgunluk / risk tespiti
+    tehlikeli = yorgunluk_analiz_et(clean_text)
+    
+    durum = "İYİ"
+    detaylar = []
+    detaylar.append("🔍 <b>PERİYODİK DURUM ANALİZ RAPORU</b>")
+    detaylar.append(f"• Mevcut Periyodik Beyan: <i>\"{clean_text}\"</i> ({periyodik_kelime_sayisi} kelime)")
+    
+    if tehlikeli:
+        durum = "KÖTÜ"
+        detaylar.append("⚠️ <b>Risk Tespiti:</b> Konuşmada yorgunluk veya risk belirten anahtar kelimeler algılandı.")
+        
+    # 3. Vardiya Başlangıcı ile Karşılaştır
+    son_shift = db.session.scalar(
+        db.select(VardiyaSesKaydi)
+        .filter_by(sofor_id=sofor_id)
+        .order_by(VardiyaSesKaydi.id.desc())
+    )
+    
+    if son_shift and son_shift.baslangic_metni:
+        baslangic_metni = son_shift.baslangic_metni
+        baslangic_kelime_sayisi = len(baslangic_metni.split())
+        if baslangic_kelime_sayisi >= 3:
+            oran = periyodik_kelime_sayisi / baslangic_kelime_sayisi
+            detaylar.append(f"• Vardiya Giriş Raporu: <i>\"{baslangic_metni}\"</i> ({baslangic_kelime_sayisi} kelime) | Oran: <b>%{oran*100:.0f}</b>")
+            if oran < 0.5:
+                durum = "RİSKLİ"
+                detaylar.append("⚠️ <b>Vardiya Girişine Göre Düşüş:</b> Konuşma uzunluğu vardiya başlangıcına kıyasla %50'den fazla azaldı! Odaklanma veya yorgunluk şüphesi.")
+                
+    # 4. Önceki Periyodik Kontrollerle Karşılaştır
+    gecmis_loglar = db.session.scalars(
+        db.select(SesLog)
+        .filter(SesLog.sofor_id == sofor_id)
+        .order_by(SesLog.log_id.desc())
+        .limit(3)
+    ).all()
+    
+    prev_word_counts = []
+    for log in gecmis_loglar:
+        prev_metin = log.metin
+        m_prev = re.search(r"Soru 1:\s*(.*?)\s*\|\s*Soru 2:\s*(.*)", prev_metin)
+        prev_text = m_prev.group(1).strip() + " " + m_prev.group(2).strip() if m_prev else prev_metin.strip()
+        prev_word_counts.append(len(prev_text.split()))
+        
+    if prev_word_counts:
+        avg_prev = sum(prev_word_counts) / len(prev_word_counts)
+        detaylar.append(f"• Önceki Periyodik Kayıtların Ortalama Kelime Sayısı: <b>{avg_prev:.1f}</b>")
+        if avg_prev >= 3 and periyodik_kelime_sayisi < avg_prev * 0.5:
+            if durum != "KÖTÜ":
+                durum = "RİSKLİ"
+            detaylar.append("📉 <b>Periyodik Düşüş Eğilimi:</b> Konuşma uzunluğu önceki periyodik kontrollere kıyasla %50'den fazla düştü! Enerji düşüklüğü ve uykusuzluk riski.")
+            
+    if durum == "İYİ":
+        detaylar.append("✅ <b>Durum Stabil:</b> Şoförün konuşma ritmi ve uzunluğu standart seviyede. Yorgunluk saptanmadı.")
+        
+    return durum, "<br>".join(detaylar)
+
 @bp.route('/index')
 @login_required
 def index():
@@ -134,20 +204,32 @@ def ses_kaydet():
     metin = data.get('metin', '')
     simdi = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # Yorgunluk/Risk analizi
-    tehlikeli = yorgunluk_analiz_et(metin)
+    # Yeni karşılaştırmalı durum ve yorgunluk analizi
+    durum, detay = periyodik_analiz_ve_karsilastirma_yap(current_user.id, metin)
     
-    log = SesLog(sofor_id=current_user.id, metin=metin, tarih_saat=simdi)
+    log = SesLog(
+        sofor_id=current_user.id, 
+        metin=metin, 
+        tarih_saat=simdi,
+        analiz_sonucu=durum,
+        analiz_detay=detay
+    )
     db.session.add(log)
     
     alert_triggered = False
     alert_message = ""
-    if tehlikeli:
+    if durum in ["KÖTÜ", "RİSKLİ"]:
         alert_triggered = True
-        alert_message = "⚠️ Dikkat! Yorgunluk veya risk tespit edildi. Acil durum alarmı merkeze iletiliyor!"
+        alert_message = f"⚠️ Dikkat! Periyodik kontrolde risk ({durum}) tespit edildi. Acil durum alarmı merkeze iletiliyor!"
+        
+        # Temiz metni durum bilgisinde göstermek için Soru 1 ve 2'yi ayrıştırıp özetleyelim
+        import re
+        m = re.search(r"Soru 1:\s*(.*?)\s*\|\s*Soru 2:\s*(.*)", metin)
+        clean_msg = m.group(1).strip() + " " + m.group(2).strip() if m else metin
+        
         alarm = Alarm(
             sofor_id=current_user.id,
-            durum_bilgi=f"Akıllı asistan periyodik ses kontrolünde yorgunluk/risk tespit etti: '{metin}'",
+            durum_bilgi=f"Akıllı asistan periyodik kontrol risk ({durum}) saptadı: '{clean_msg[:120]}'",
             alarm_tipi="ASİSTAN ALARMI",
             tarih_saat=simdi
         )
@@ -157,8 +239,11 @@ def ses_kaydet():
     return jsonify({
         "success": True, 
         "alert_triggered": alert_triggered, 
-        "alert_message": alert_message
+        "alert_message": alert_message,
+        "analiz_sonucu": durum,
+        "analiz_detay": detay
     })
+
 
 @bp.route('/api/vardiya_baslat', methods=['POST'])
 @login_required

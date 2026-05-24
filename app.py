@@ -509,14 +509,17 @@ def sofor_paneli():
             text = recognizer.recognize_google(audio_data, language="tr-TR").lower()
             
             st.write(f"🗣️ Algılanan Cümle: *{text}*")
-            tehlike = any(k in text for k in ["yoruldum", "kötüyüm", "uyku", "yardım", "kaza"])
             
-            if tehlike:
-                db.alarm_olustur(sofor['id'], f"SESLİ TEHLİKE | Metin: {text}", "SES_ANALİZ")
-                st.error("🚨 Tehlike Cümlesi Alındı. Alarm Geçildi!")
+            durum, detay = db.periyodik_yorgunluk_analizi_yap(sofor['id'], text)
+            
+            if durum in ["KÖTÜ", "RİSKLİ"]:
+                db.alarm_olustur(sofor['id'], f"SESLİ TEHLİKE ({durum}) | Metin: {text}", "SES_ANALİZ")
+                db.ses_logu_ekle(sofor['id'], text, durum, detay)
+                st.error(f"🚨 Tehlike/Risk Saptandı ({durum}). Alarm Geçildi!\n\nDetay: {detay.replace('<br>', '\n')}")
             else:
-                db.ses_logu_ekle(sofor['id'], text)
-                st.success("✅ Uyumlu yanıt merkeze kaydedildi.")
+                db.ses_logu_ekle(sofor['id'], text, durum, detay)
+                st.success(f"✅ Uyumlu yanıt merkeze kaydedildi.\n\nDetay: {detay.replace('<br>', '\n')}")
+
                 
             # Başarılı yanıt sonrası döngüyü kapat
             st.session_state.anket_asamasi = 0

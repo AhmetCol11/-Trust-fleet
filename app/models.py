@@ -67,6 +67,8 @@ class SesLog(db.Model):
     sofor_id: Mapped[int] = mapped_column(ForeignKey('soforler.id'), nullable=False)
     tarih_saat: Mapped[str] = mapped_column(String(50), nullable=False, default=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     metin: Mapped[str] = mapped_column(Text, nullable=False)
+    analiz_sonucu: Mapped[Optional[str]] = mapped_column(String(50))
+    analiz_detay: Mapped[Optional[str]] = mapped_column(Text)
 
     sofor: Mapped["Sofor"] = relationship(back_populates="ses_loglari")
     
@@ -76,8 +78,11 @@ class SesLog(db.Model):
             "sofor_id": self.sofor_id,
             "sofor_adi": f"{self.sofor.ad} {self.sofor.soyad}" if self.sofor else "",
             "tarih_saat": self.tarih_saat,
-            "metin": self.metin
+            "metin": self.metin,
+            "analiz_sonucu": self.analiz_sonucu,
+            "analiz_detay": self.analiz_detay
         }
+
 
 class VardiyaSesKaydi(db.Model):
     __tablename__ = 'vardiya_ses_kayitlari'

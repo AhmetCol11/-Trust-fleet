@@ -99,9 +99,22 @@ def init_db():
             sofor_id    INTEGER NOT NULL,
             tarih_saat  TEXT NOT NULL,
             metin       TEXT NOT NULL,
+            analiz_sonucu TEXT,
+            analiz_detay  TEXT,
             FOREIGN KEY (sofor_id) REFERENCES soforler(id)
         )
     """)
+
+    # Geriye dönük uyumluluk için sütun ekleme kontrolü (eğer veritabanı zaten varsa)
+    try:
+        cur.execute("ALTER TABLE ses_loglari ADD COLUMN analiz_sonucu TEXT")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cur.execute("ALTER TABLE ses_loglari ADD COLUMN analiz_detay TEXT")
+    except sqlite3.OperationalError:
+        pass
+
 
     # ── TABLO 4: vardiya_ses_kayitlari ────────────────────
     # Vardiya başı ve sonu ses kayıtlarını + analiz sonucunu saklar
@@ -262,7 +275,7 @@ def alarm_olustur(sofor_id: int, durum_bilgi: str = "ACİL DURUM - PANİK BUTONU
 # ─────────────────────────────────────────────────────────────
 # FONKSİYON 4b: Uyumlu Ses Kaydını Ekle
 # ─────────────────────────────────────────────────────────────
-def ses_logu_ekle(sofor_id: int, metin: str):
+def ses_logu_ekle(sofor_id: int, metin: str, analiz_sonucu: str = None, analiz_detay: str = None):
     """
     Şoförün "Nasılsınız?" sorusuna verdiği normal/sağlıklı yanıtları kaydeder.
     """
@@ -272,11 +285,12 @@ def ses_logu_ekle(sofor_id: int, metin: str):
     conn = sqlite3.connect(DB_DOSYASI)
     cur = conn.cursor()
     cur.execute(
-        "INSERT INTO ses_loglari (sofor_id, tarih_saat, metin) VALUES (?, ?, ?)",
-        (sofor_id, simdi, metin)
+        "INSERT INTO ses_loglari (sofor_id, tarih_saat, metin, analiz_sonucu, analiz_detay) VALUES (?, ?, ?, ?, ?)",
+        (sofor_id, simdi, metin, analiz_sonucu, analiz_detay)
     )
     conn.commit()
     conn.close()
+
 
 
 # ─────────────────────────────────────────────────────────────
@@ -334,7 +348,9 @@ def tum_ses_loglarini_getir(sofor_id=None):
             l.sofor_id,
             s.ad || ' ' || s.soyad  AS sofor_adi,
             l.tarih_saat,
-            l.metin
+            l.metin,
+            l.analiz_sonucu,
+            l.analiz_detay
         FROM ses_loglari l
         INNER JOIN soforler s ON l.sofor_id = s.id
     """
@@ -350,6 +366,7 @@ def tum_ses_loglarini_getir(sofor_id=None):
     loglar = cur.fetchall()
     conn.close()
     return [dict(row) for row in loglar]
+
 
 
 # ─────────────────────────────────────────────────────────────
@@ -404,6 +421,96 @@ def yorgunluk_analizi_yap(baslangic_metni: str, bitis_metni: str, baslangic_sure
 
 
 # ─────────────────────────────────────────────────────────────
+# FONKSİYON 7b: Periyodik Kontrol Yorgunluk & Risk Analiz Motoru
+# ─────────────────────────────────────────────────────────────
+def periyodik_yorgunluk_analizi_yap(sofor_id: int, metin: str):
+    """
+    10 dakikada bir yapılan periyodik asistan görüşmelerini,
+    vardiya başlangıcı ve önceki periyodik kontrollerle kıyaslayarak analiz eder.
+    """
+    import re
+    
+    # 1. Metni ayrıştır ve temizle ("Soru 1: ... | Soru 2: ...")
+    m = re.search(r"Soru 1:\s*(.*?)\s*\|\s*Soru 2:\s*(.*)", metin)
+    if m:
+        clean_text = m.group(1).strip() + " " + m.group(2).strip()
+    else:
+        clean_text = metin.strip()
+        
+    periyodik_kelime_sayisi = len(clean_text.split())
+    
+    # 2. Kelime bazlı yorgunluk / risk tespiti
+    yorgunluk_kelimeleri = [
+        "yoruldum", "yorgun", "çok yoruldum", "bitik", "halsiz",
+        "uyku", "uyuyakaldım", "uyukluyorum", "gözlerim kapanıyor",
+        "baş ağrısı", "başım ağrıyor", "baş dönüyor",
+        "mola istiyorum", "kötüyüm", "iyi değilim",
+        "zor", "dayanamıyorum", "argın", "halsizim", "bitkinim", "uykum"
+    ]
+    tehlikeli = any(k in clean_text.lower() for k in yorgunluk_kelimeleri)
+    
+    durum = "İYİ"
+    detaylar = []
+    detaylar.append("🔍 <b>PERİYODİK DURUM ANALİZ RAPORU</b>")
+    detaylar.append(f"• Mevcut Periyodik Beyan: <i>\"{clean_text}\"</i> ({periyodik_kelime_sayisi} kelime)")
+    
+    if tehlikeli:
+        durum = "KÖTÜ"
+        detaylar.append("⚠️ <b>Risk Tespiti:</b> Konuşmada yorgunluk veya risk belirten anahtar kelimeler algılandı.")
+        
+    # 3. Vardiya Başlangıcı ile Karşılaştır
+    conn = sqlite3.connect(DB_DOSYASI)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    
+    cur.execute(
+        "SELECT baslangic_metni FROM vardiya_ses_kayitlari WHERE sofor_id = ? ORDER BY id DESC LIMIT 1",
+        (sofor_id,)
+    )
+    son_shift = cur.fetchone()
+    
+    if son_shift and son_shift["baslangic_metni"]:
+        baslangic_metni = son_shift["baslangic_metni"]
+        baslangic_kelime_sayisi = len(baslangic_metni.split())
+        if baslangic_kelime_sayisi >= 3:
+            oran = periyodik_kelime_sayisi / baslangic_kelime_sayisi
+            detaylar.append(f"• Vardiya Giriş Raporu: <i>\"{baslangic_metni}\"</i> ({baslangic_kelime_sayisi} kelime) | Oran: <b>%{oran*100:.0f}</b>")
+            if oran < 0.5:
+                durum = "RİSKLİ"
+                detaylar.append("⚠️ <b>Vardiya Girişine Göre Düşüş:</b> Konuşma uzunluğu vardiya başlangıcına kıyasla %50'den fazla azaldı! Odaklanma veya yorgunluk şüphesi.")
+                
+    # 4. Önceki Periyodik Kontrollerle Karşılaştır
+    cur.execute(
+        "SELECT metin FROM ses_loglari WHERE sofor_id = ? ORDER BY log_id DESC LIMIT 3",
+        (sofor_id,)
+    )
+    gecmis_loglar = cur.fetchall()
+    conn.close()
+    
+    prev_word_counts = []
+    for log in gecmis_loglar:
+        prev_metin = log["metin"]
+        m_prev = re.search(r"Soru 1:\s*(.*?)\s*\|\s*Soru 2:\s*(.*)", prev_metin)
+        prev_text = m_prev.group(1).strip() + " " + m_prev.group(2).strip() if m_prev else prev_metin.strip()
+        prev_word_counts.append(len(prev_text.split()))
+        
+    if prev_word_counts:
+        avg_prev = sum(prev_word_counts) / len(prev_word_counts)
+        detaylar.append(f"• Önceki Periyodik Kayıtların Ortalama Kelime Sayısı: <b>{avg_prev:.1f}</b>")
+        if avg_prev >= 3 and periyodik_kelime_sayisi < avg_prev * 0.5:
+            # Eğer durum zaten KÖTÜ (keyword bulgusu) değilse, RİSKLİ yap
+            if durum != "KÖTÜ":
+                durum = "RİSKLİ"
+            detaylar.append("📉 <b>Periyodik Düşüş Eğilimi:</b> Konuşma uzunluğu önceki periyodik kontrollere kıyasla %50'den fazla düştü! Enerji düşüklüğü ve uykusuzluk riski.")
+            
+    if durum == "İYİ":
+        detaylar.append("✅ <b>Durum Stabil:</b> Şoförün konuşma ritmi ve uzunluğu standart seviyede. Yorgunluk saptanmadı.")
+        
+    return durum, "<br>".join(detaylar)
+
+
+# ─────────────────────────────────────────────────────────────
+
 # FONKSİYON 8: Vardiya Ses Kaydını Veritabanına Ekle
 # ─────────────────────────────────────────────────────────────
 def vardiya_ses_kaydet(sofor_id: int, baslangic_metni: str, bitis_metni: str,
