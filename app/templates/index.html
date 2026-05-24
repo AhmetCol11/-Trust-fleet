@@ -20,15 +20,59 @@
 <div class="row align-items-center mb-4">
     <div class="col-md-9">
         <h2 class="fw-bold text-light">🛡️ Sürüş Güvenlik Paneli (Şoför)</h2>
-        <p class="text-secondary">Hoşgeldiniz, <b>{{ current_user.ad }} {{ current_user.soyad }}</b> | Araç: {{ current_user.arac_plaka }}</p>
+        <p class="text-secondary mb-0">
+            Hoşgeldiniz, <b>{{ current_user.ad }} {{ current_user.soyad }}</b> | 
+            Araç: 
+            {% if current_user.arac_plaka %}
+                <span class="badge bg-warning text-dark fs-6">{{ current_user.arac_plaka }}</span>
+                {% if not vardiya_aktif %}
+                    <a href="{{ url_for('main.arac_plaka_birak') }}" class="btn btn-sm btn-outline-warning ms-2" style="font-size: 0.75rem; padding: 2px 6px;"><i class="fa-solid fa-arrows-rotate"></i> Aracı Değiştir</a>
+                {% endif %}
+            {% else %}
+                <span class="badge bg-danger fs-6">Henüz Seçilmedi</span>
+            {% endif %}
+        </p>
     </div>
     <div class="col-md-3 text-end">
         <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger fw-bold">🚪 Çıkış Yap</a>
     </div>
 </div>
 
-<!-- Vardiya Kontrol Kartı (En Üst Bölüm) -->
+{% if not current_user.arac_plaka %}
+<!-- Araç Seçim Kartı -->
 <div class="row">
+    <div class="col-12 mb-4">
+        <div class="streamlit-container mt-0 py-4 premium-card">
+            <h4 class="text-warning fw-bold mb-3"><i class="fa-solid fa-bus"></i> Aktif Araç / Plaka Seçimi</h4>
+            <p class="text-light">Sürüşe ve vardiyaya başlayabilmek için bugün kullanacağınız aracın plakasını seçin veya girin:</p>
+            <form action="{{ url_for('main.arac_plaka_sec') }}" method="post" class="row g-3 align-items-center">
+                <div class="col-md-5">
+                    <select name="secilen_hazir_plaka" class="form-select bg-dark text-light border-secondary py-2 fs-6">
+                        <option value="">-- Popüler Plakalardan Seçin --</option>
+                        <option value="34 ABC 001">34 ABC 001</option>
+                        <option value="06 XYZ 999">06 XYZ 999</option>
+                        <option value="35 DEF 777">35 DEF 777</option>
+                        <option value="06 GBT 111">06 GBT 111</option>
+                        <option value="34 MNO 222">34 MNO 222</option>
+                        <option value="16 BUR 333">16 BUR 333</option>
+                        <option value="35 IZM 444">35 IZM 444</option>
+                        <option value="01 ADA 555">01 ADA 555</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="yeni_plaka" class="form-control bg-dark text-light border-secondary py-2 fs-6" placeholder="Veya yeni plaka yazın (Örn: 34 CAN 34)">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-warning fw-bold w-100 py-2 fs-6"><i class="fa-solid fa-check"></i> Aracı Eşleştir ve Kilidi Aç</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Vardiya Kontrol Kartı (En Üst Bölüm) -->
+<div class="row {% if not current_user.arac_plaka %}shift-locked{% endif %}">
     <div class="col-12 mb-4">
         <div class="streamlit-container mt-0 py-4 premium-card">
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
@@ -52,7 +96,7 @@
 </div>
 
 <!-- Şoför Kontrolleri Grid'i (Vardiya Kapalıyken Kilitlenecek) -->
-<div class="row {% if not vardiya_aktif %}shift-locked{% endif %}" id="driverDashboardGrid">
+<div class="row {% if not vardiya_aktif or not current_user.arac_plaka %}shift-locked{% endif %}" id="driverDashboardGrid">
     <!-- SOL KOLON: Panik Butonu -->
     <div class="col-lg-4 col-md-6 mb-4">
         <div class="streamlit-container h-100 mt-0 premium-card d-flex flex-column">
@@ -274,7 +318,7 @@ btnVoiceRetry.addEventListener('click', function() {
 const btnVardiyaBaslat = document.getElementById('btnVardiyaBaslat');
 if (btnVardiyaBaslat) {
     btnVardiyaBaslat.addEventListener('click', function() {
-        const soru = "Merhaba şoför bey, nasılsınız? Kendinizi seyahate başlamak için dinç hissediyor musunuz? Lütfen sözel olarak cevap verin.";
+        const soru = "Merhaba şoför bey, nasılsınız? Kendinizi seyahate başlamak için dinç hissediyor musunuz? Lütfen sesli olarak cevap verin.";
         sesliSoruSor(soru, 'baslangic', function(metin) {
             fetch('{{ url_for("main.vardiya_baslat") }}', {
                 method: 'POST',

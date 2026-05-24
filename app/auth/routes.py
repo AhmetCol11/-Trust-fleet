@@ -30,11 +30,19 @@ def login():
     form = LoginForm()
     yolcu_form = YolcuSorguForm()
     
-    if form.validate_on_submit() and request.form.get('login_type') == 'sofor':
-        user = db.session.scalar(db.select(Sofor).filter_by(kullanici_adi=form.kullanici_adi.data))
-        if user is None or not user.check_password(form.sifre.data):
-            flash('Geçersiz kullanıcı adı veya şifre')
+    if request.method == 'POST' and request.form.get('login_type') == 'sofor':
+        kadi = request.form.get('kullanici_adi', '').strip().lower()
+        sifre = request.form.get('sifre', '')
+        
+        if not kadi or not sifre:
+            flash('Lütfen kullanıcı adı ve şifre alanlarını doldurun.', 'danger')
             return redirect(url_for('auth.login'))
+            
+        user = db.session.scalar(db.select(Sofor).filter_by(kullanici_adi=kadi))
+        if user is None or not user.check_password(sifre):
+            flash('Geçersiz kullanıcı adı veya şifre.', 'danger')
+            return redirect(url_for('auth.login'))
+            
         login_user(user)
         next_page = request.args.get('next')
         if not next_page or urlsplit(next_page).netloc != '':
@@ -68,6 +76,9 @@ def login():
 
 @bp.route('/logout')
 def logout():
+    if current_user.is_authenticated:
+        current_user.arac_plaka = ""
+        db.session.commit()
     logout_user()
     return redirect(url_for('auth.login'))
 
@@ -107,6 +118,91 @@ def yolcu_kayit():
         return redirect(url_for('auth.login'))
         
     return render_template('yolcu_kayit.html', title='Yolcu Kayıt')
+
+@bp.route('/sofor_kayit', methods=['GET', 'POST'])
+def sofor_kayit():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+        
+    if request.method == 'POST':
+        ad = request.form.get('ad')
+        soyad = request.form.get('soyad')
+        email = request.form.get('email', '').strip().lower()
+        kullanici_adi = request.form.get('kullanici_adi', '').strip().lower()
+        sifre = request.form.get('sifre')
+        
+        if not ad or not soyad or not email or not kullanici_adi or not sifre:
+            flash('Lütfen tüm alanları doldurun.', 'danger')
+            return redirect(url_for('auth.sofor_kayit'))
+            
+        existing_username = db.session.scalar(db.select(Sofor).filter_by(kullanici_adi=kullanici_adi))
+        if existing_username:
+            flash('Bu kullanıcı adı zaten alınmış.', 'danger')
+            return redirect(url_for('auth.sofor_kayit'))
+            
+        existing_email = db.session.scalar(db.select(Sofor).filter_by(email=email))
+        if existing_email:
+            flash('Bu e-posta adresiyle zaten şoför kaydı yapılmış.', 'danger')
+            return redirect(url_for('auth.sofor_kayit'))
+            
+        sifre_hash = hashlib.sha256(sifre.encode()).hexdigest()
+        # Yeni şoför plakasız (boş string) olarak kaydedilir
+        sofor = Sofor(ad=ad, soyad=soyad, email=email, kullanici_adi=kullanici_adi, arac_plaka="", sifre_hash=sifre_hash, sifre_plain=sifre)
+        db.session.add(sofor)
+        db.session.commit()
+        
+        flash('Şoför kaydınız başarıyla tamamlandı! Şimdi giriş yapabilirsiniz.', 'success')
+        return redirect(url_for('auth.login'))
+        
+    return render_template('sofor_kayit.html', title='Şoför Kayıt')
+
+@bp.route('/sofor_sifre_sifirla', methods=['GET', 'POST'])
+def sofor_sifre_sifirla():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        sofor = db.session.scalar(db.select(Sofor).filter_by(email=email))
+        
+        if sofor:
+            token = secrets.token_hex(16)
+            sofor.reset_token = token
+            db.session.commit()
+            
+            reset_url = url_for('auth.sofor_sifre_yenile', token=token, _external=True)
+            print("\n" + "="*80)
+            print("[AKADEMIK/DEMO ŞOFÖR SIFRE SIFIRLAMA E-POSTASI]")
+            print(f"Alici: {sofor.ad} {sofor.soyad} ({email})")
+            print(f"Sifre Sifirlama Linki: {reset_url}")
+            print("="*80 + "\n")
+            
+            flash('Şifre sıfırlama linki e-posta adresinize gönderildi (Demo modunda terminal konsoluna yazdırılmıştır).', 'success')
+            return render_template('sofor_sifre_sifirla.html', title='Şoför Şifre Sıfırlama', email_sent=True, reset_url=reset_url)
+        else:
+            flash('Bu e-posta adresiyle kayıtlı bir şoför bulunamadı.', 'danger')
+            
+    return render_template('sofor_sifre_sifirla.html', title='Şoför Şifre Sıfırlama', email_sent=False)
+
+@bp.route('/sofor_sifre_yenile/<token>', methods=['GET', 'POST'])
+def sofor_sifre_yenile(token):
+    sofor = db.session.scalar(db.select(Sofor).filter_by(reset_token=token))
+    if not sofor:
+        flash('Geçersiz veya süresi dolmuş sıfırlama token\'ı.', 'danger')
+        return redirect(url_for('auth.login'))
+        
+    if request.method == 'POST':
+        yeni_sifre = request.form.get('sifre')
+        if not yeni_sifre:
+            flash('Lütfen geçerli bir şifre girin.', 'danger')
+            return redirect(url_for('auth.sofor_sifre_yenile', token=token))
+            
+        sofor.sifre_hash = hashlib.sha256(yeni_sifre.encode()).hexdigest()
+        sofor.sifre_plain = yeni_sifre
+        sofor.reset_token = None
+        db.session.commit()
+        
+        flash('Şifreniz başarıyla güncellendi! Yeni şifrenizle giriş yapabilirsiniz.', 'success')
+        return redirect(url_for('auth.login'))
+        
+    return render_template('sofor_sifre_yenile.html', title='Yeni Şifre Belirle', token=token)
 
 @bp.route('/yolcu_sifre_sifirla', methods=['GET', 'POST'])
 def yolcu_sifre_sifirla():

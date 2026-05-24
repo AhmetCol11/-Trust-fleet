@@ -16,9 +16,12 @@ class Sofor(UserMixin, db.Model):
     ad: Mapped[str] = mapped_column(String(100), nullable=False)
     soyad: Mapped[str] = mapped_column(String(100), nullable=False)
     kullanici_adi: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
-    arac_plaka: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    email: Mapped[Optional[str]] = mapped_column(String(120), unique=True)
+    arac_plaka: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     sifre_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     sifre_plain: Mapped[Optional[str]] = mapped_column(String(255))
+    reset_token: Mapped[Optional[str]] = mapped_column(String(100))
+    reset_token_expiry: Mapped[Optional[str]] = mapped_column(String(50))
 
     alarmlar: Mapped[List["Alarm"]] = relationship(back_populates="sofor")
     ses_loglari: Mapped[List["SesLog"]] = relationship(back_populates="sofor")

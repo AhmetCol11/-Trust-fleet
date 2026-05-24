@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .login-container {
+        max-width: 550px;
+        margin: 50px auto 25px auto;
+        padding: 40px;
+        background: rgba(21, 26, 38, 0.65);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        border-radius: 24px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 40px rgba(245, 158, 11, 0.15);
+    }
+    
+    .logo-outer-wrapper {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    
+    .logo-container {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        background: rgba(245, 158, 11, 0.05);
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.2);
+    }
+    
+    .logo-icon {
+        font-size: 2.4rem;
+        color: #f59e0b;
+        filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.6));
+    }
+    
+    .input-icon-group {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .input-icon-group i {
+        position: absolute;
+        left: 16px;
+        font-size: 1.15rem;
+        transition: all 0.3s;
+        z-index: 10;
+        color: rgba(245, 158, 11, 0.45);
+    }
+    
+    .input-icon-group .form-control {
+        padding-left: 48px !important;
+        height: 54px;
+        border-radius: 14px;
+        background-color: rgba(10, 12, 18, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        color: #fafafa !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+    
+    .input-icon-group .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.25);
+    }
+    
+    .input-icon-group .form-control:focus {
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 14px rgba(245, 158, 11, 0.25) !important;
+        background-color: rgba(245, 158, 11, 0.02) !important;
+    }
+    
+    .input-icon-group .form-control:focus ~ i {
+        color: #f59e0b;
+    }
+    
+    .btn-premium-submit {
+        width: 100%;
+        height: 54px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: 0.5px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: none;
+        color: #fff;
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        box-shadow: 0 5px 15px rgba(245, 158, 11, 0.25);
+    }
+    
+    .btn-premium-submit:hover {
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(245, 158, 11, 0.35);
+    }
+</style>
+
+<div class="login-container">
+    <div class="logo-outer-wrapper">
+        <div class="logo-container">
+            <i class="fa-solid fa-user-plus logo-icon"></i>
+        </div>
+        <h2 class="fw-extrabold text-light mb-1">Şoför Kayıt Ol</h2>
+        <p class="text-secondary small">Sürüş Güvenlik Sistemine Şoför Olarak Kaydolun</p>
+    </div>
+
+    <form action="" method="post">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <label class="form-label fw-semibold text-light mb-2">Ad</label>
+                <div class="input-icon-group">
+                    <i class="fa-solid fa-signature"></i>
+                    <input type="text" name="ad" class="form-control" required placeholder="Adınız">
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label class="form-label fw-semibold text-light mb-2">Soyad</label>
+                <div class="input-icon-group">
+                    <i class="fa-solid fa-signature"></i>
+                    <input type="text" name="soyad" class="form-control" required placeholder="Soyadınız">
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-semibold text-light mb-2">E-posta Adresi</label>
+            <div class="input-icon-group">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" name="email" class="form-control" required placeholder="E-posta adresiniz">
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-semibold text-light mb-2">Kullanıcı Adı</label>
+            <div class="input-icon-group">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" name="kullanici_adi" class="form-control" required placeholder="Kullanıcı adınız">
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-semibold text-light mb-2">Şifre</label>
+            <div class="input-icon-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" name="sifre" class="form-control" required placeholder="Şifreniz">
+            </div>
+        </div>
+        
+        <div class="pt-2">
+            <button type="submit" class="btn-premium-submit">
+                <i class="fa-solid fa-user-plus"></i> Kaydı Tamamla ve Katıl
+            </button>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('auth.login') }}" class="text-secondary small text-decoration-none"><i class="fa-solid fa-chevron-left me-1"></i> Giriş Yapma Ekranına Dön</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -188,6 +188,65 @@ def index():
         vardiya_aktif = True
     return render_template('index.html', title='Şoför Paneli', vardiya_aktif=vardiya_aktif)
 
+@bp.route('/arac_plaka_sec', methods=['POST'])
+@login_required
+def arac_plaka_sec():
+    secilen_plaka = request.form.get('secilen_hazir_plaka')
+    yeni_plaka = request.form.get('yeni_plaka')
+    
+    plaka = yeni_plaka.strip().upper() if yeni_plaka and yeni_plaka.strip() else secilen_plaka
+    
+    if not plaka or plaka.strip() == "":
+        flash('Lütfen geçerli bir araç plakası seçin veya yazın.', 'danger')
+        return redirect(url_for('main.index'))
+    
+    # Aynı plaka başka bir AKTİF VARDİYASI OLAN şoför tarafından kullanılıyor mu?
+    other_drivers = db.session.scalars(
+        db.select(Sofor).filter(Sofor.arac_plaka == plaka, Sofor.id != current_user.id)
+    ).all()
+    
+    active_driver = None
+    for drv in other_drivers:
+        son_shift = db.session.scalar(
+            db.select(VardiyaSesKaydi)
+            .filter_by(sofor_id=drv.id)
+            .order_by(VardiyaSesKaydi.id.desc())
+        )
+        if son_shift and son_shift.baslangic_metni and not son_shift.bitis_metni:
+            active_driver = drv
+            break
+            
+    if active_driver:
+        flash(f'Bu plaka ({plaka}) şu anda başka bir aktif şoför ({active_driver.ad} {active_driver.soyad}) tarafından kullanılıyor!', 'danger')
+        return redirect(url_for('main.index'))
+        
+    # Eğer plaka başka bir pasif şoförde kaldıysa, onun plakasını temizleyelim (çakışmayı önlemek için)
+    for drv in other_drivers:
+        drv.arac_plaka = ""
+        
+    current_user.arac_plaka = plaka
+    db.session.commit()
+    flash(f'Araç plakası {plaka} olarak başarıyla eşleştirildi!', 'success')
+    return redirect(url_for('main.index'))
+
+@bp.route('/arac_plaka_birak', methods=['GET'])
+@login_required
+def arac_plaka_birak():
+    son_shift = db.session.scalar(
+        db.select(VardiyaSesKaydi)
+        .filter_by(sofor_id=current_user.id)
+        .order_by(VardiyaSesKaydi.id.desc())
+    )
+    if son_shift and son_shift.baslangic_metni and not son_shift.bitis_metni:
+        flash('Aktif vardiyanız varken plaka değişikliği yapamazsınız. Önce vardiyayı sonlandırın.', 'danger')
+        return redirect(url_for('main.index'))
+        
+    plaka = current_user.arac_plaka
+    current_user.arac_plaka = ""
+    db.session.commit()
+    flash(f'{plaka} plakalı araç bırakıldı. Yeni plaka seçebilirsiniz.', 'success')
+    return redirect(url_for('main.index'))
+
 @bp.route('/api/alarm_ekle', methods=['POST'])
 @login_required
 def alarm_ekle():
@@ -312,6 +371,9 @@ def vardiya_bitir():
     durum, detay = analiz_ve_karsilastirma_yap(current_user.id, shift.baslangic_metni, metin)
     shift.analiz_sonucu = durum
     shift.analiz_detay = detay
+    
+    # Vardiya bittiğinde araç plakasını da serbest bırakıyoruz
+    current_user.arac_plaka = ""
     db.session.commit()
     
     return jsonify({
@@ -329,13 +391,28 @@ def yolcu_plaka_sorgula():
             flash('Lütfen otobüs plakasını girin.', 'danger')
             return redirect(url_for('main.yolcu_plaka_sorgula'))
             
-        sofor = db.session.scalar(db.select(Sofor).filter_by(arac_plaka=plaka))
+        # Boşluktan bağımsız (space-insensitive) arama yap
+        search_plaka = plaka.replace(" ", "")
+        sofor = None
+        
+        all_soforler = db.session.scalars(
+            db.select(Sofor).filter(Sofor.arac_plaka != "", Sofor.arac_plaka != None)
+        ).all()
+        
+        for s in all_soforler:
+            if s.arac_plaka.replace(" ", "").upper() == search_plaka:
+                sofor = s
+                break
+                
         if sofor:
             return redirect(url_for('main.yolcu_panel', sofor_id=sofor.id))
         else:
             flash('Bu plakaya ait aktif bir otobüs/sefer bulunamadı.', 'danger')
             
-    soforler = db.session.scalars(db.select(Sofor)).all()
+    # Yolcu arama ekranında sadece plaka giren (boş olmayan) şoförleri listele
+    soforler = db.session.scalars(
+        db.select(Sofor).filter(Sofor.arac_plaka != "", Sofor.arac_plaka != None)
+    ).all()
     return render_template('yolcu_plaka_sorgula.html', title='Otobüs Sorgula', soforler=soforler)
 
 @bp.route('/yolcu/<int:sofor_id>', methods=['GET', 'POST'])
