@@ -326,6 +326,27 @@ def yolcu_panel(sofor_id):
         return redirect(url_for('auth.login'))
     
     if request.method == 'POST':
+        # Yorum sınırlaması kontrolü: 10 dakikada bir yorum (Spam Engelleme)
+        yolcu_id = session.get('yolcu_id')
+        son_yorum = db.session.scalar(
+            db.select(YolcuYorum)
+            .filter_by(yolcu_id=yolcu_id)
+            .order_by(YolcuYorum.tarih_saat.desc())
+        )
+        if son_yorum:
+            try:
+                son_tarih = datetime.strptime(son_yorum.tarih_saat, "%Y-%m-%d %H:%M:%S")
+                fark = datetime.now() - son_tarih
+                fark_dakika = fark.total_seconds() / 60
+                if fark_dakika < 10:
+                    kalan_sure = int(10 - fark_dakika)
+                    if kalan_sure <= 0:
+                        kalan_sure = 1
+                    flash(f'Spam engelleme aktif! Lütfen yeni bir değerlendirme göndermek için {kalan_sure} dakika bekleyin.', 'danger')
+                    return redirect(url_for('main.yolcu_panel', sofor_id=sofor_id))
+            except Exception:
+                pass
+
         puan = int(request.form.get('puan', 5))
         etiketler = request.form.get('etiketler', '')
         serbest_yorum = request.form.get('serbest_yorum', '')
@@ -333,7 +354,7 @@ def yolcu_panel(sofor_id):
         
         yorum = YolcuYorum(
             sofor_id=sofor_id,
-            yolcu_id=session.get('yolcu_id'),
+            yolcu_id=yolcu_id,
             puan=puan,
             etiketler=etiketler,
             serbest_yorum=serbest_yorum,

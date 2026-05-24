@@ -164,6 +164,18 @@ Yolcu paneli otobüs sorgulama ekranında, testlerin ve akademik sunumların dah
 - **Glassmorphic Arayüz Koruması:** Mevcut şık kart yapısını bozmamak için, sorgulama formunun altına `.badge-plaka` sınıfı ile yeşil neon gölgeli ve üzerine gelindiğinde parlayan esnek rozetler eklendi.
 - **Tek Tıkla Seçim (Auto-Fill & Glow Effect):** Yazılan `selectPlaka(plaka)` JavaScript fonksiyonu ile butona tıklandığında plaka anında girdi kutusuna aktarılarak hafif bir yeşil parıldama animasyonu (`plaka-glow`) tetiklendi ve kutuya odaklanma (focus) sağlandı.
 
+
+## Oturum 13: Windows Konsol Unicode Hata Düzeltmesi ve Yolcu Değerlendirme 10 Dakikalık Hız Sınırı (24 Mayıs 2026)
+
+### Hedef
+1. Şifre sıfırlama taleplerinde, Windows komut satırlarında (PowerShell/CMD) CP1254 karakter kodlaması sebebiyle Unicode emojilerinden kaynaklanan `UnicodeEncodeError` (500 sunucu hatası) çökmesini kalıcı olarak düzeltmek.
+2. Yolcu değerlendirme panelinde spam gönderimleri ve kötüye kullanımı engellemek için, bir yolcunun ardışık yapacağı yorum/şikayet/övgü değerlendirmeleri arasına 10 dakikalık bir bekleme süresi (rate-limiting) getirmek.
+
+### Teknik Detaylar ve AI Katkısı
+- **Terminal Emoji ve Kodlama Düzeltmesi:** `/auth/yolcu_sifre_sifirla` rotası (`app/auth/routes.py`) içerisindeki `print` satırlarında yer alan Unicode emojisi (`🔑`) kaldırılarak standart güvenli karakter setiyle güncellendi. Windows sistemlerindeki çökme engellendi ve hızlı erişim şablonunun sorunsuzca açılması sağlandı.
+- **SQLite Tabanlı Zaman Sınırlaması (10 Dakikalık Spam Koruması):** Yolcu değerlendirme postası alındığında (`app/main/routes.py` üzerindeki `/yolcu/<sofor_id>` rotasında), veritabanından ilgili `yolcu_id`ye ait en son `YolcuYorum` tarihi sorgulandı. 
+- **Dinamik Geri Sayım & Flask Flash Uyarısı:** Son yorumun üzerinden geçen süre hesaplanarak 10 dakikadan az ise işlem durdurulup yolcuya *"Spam engelleme aktif! Lütfen yeni bir değerlendirme göndermek için X dakika bekleyin."* uyarısı şık bir kırmızı alert (`danger`) ile ekrana yansıtıldı.
+
 ---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
 
