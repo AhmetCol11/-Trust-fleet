@@ -384,3 +384,29 @@ def yolcu_alarm_ekle(sofor_id):
     db.session.add(alarm)
     db.session.commit()
     return jsonify({"success": True})
+
+@bp.route('/api/sofor/konum_guncelle', methods=['POST'])
+@login_required
+def sofor_konum_guncelle():
+    data = request.json
+    enlem = data.get('enlem')
+    boylam = data.get('boylam')
+    
+    if enlem is None or boylam is None:
+        return jsonify({"success": False, "error": "Koordinatlar gereklidir."}), 400
+        
+    from app.models import AracKonum
+    konum = db.session.get(AracKonum, current_user.id)
+    simdi = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    if not konum:
+        konum = AracKonum(sofor_id=current_user.id, enlem=enlem, boylam=boylam, son_guncelleme=simdi)
+        db.session.add(konum)
+    else:
+        konum.enlem = enlem
+        konum.boylam = boylam
+        konum.son_guncelleme = simdi
+        
+    db.session.commit()
+    return jsonify({"success": True})
+
