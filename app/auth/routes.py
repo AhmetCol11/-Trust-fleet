@@ -122,9 +122,9 @@ def yolcu_sifre_sifirla():
             # Akademik/Demo Modunda Linki Konsola Yazdır
             reset_url = url_for('auth.yolcu_sifre_yenile', token=token, _external=True)
             print("\n" + "="*80)
-            print("🔑 [AKADEMİK/DEMO ŞİFRE SIFIRLAMA E-POSTASI]")
-            print(f"Alıcı: {yolcu.ad_soyad} ({email})")
-            print(f"Şifre Sıfırlama Linki: {reset_url}")
+            print("[AKADEMIK/DEMO SIFRE SIFIRLAMA E-POSTASI]")
+            print(f"Alici: {yolcu.ad_soyad} ({email})")
+            print(f"Sifre Sifirlama Linki: {reset_url}")
             print("="*80 + "\n")
             
             flash('Şifre sıfırlama linki e-posta adresinize gönderildi (Demo modunda terminal konsoluna yazdırılmıştır).', 'success')
