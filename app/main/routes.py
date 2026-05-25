@@ -218,15 +218,13 @@ def arac_plaka_sec():
         if son_shift and son_shift.baslangic_metni and not son_shift.bitis_metni:
             active_driver = drv
             break
-            
     if active_driver:
         flash(f'Bu plaka ({plaka}) şu anda başka bir aktif şoför ({active_driver.ad} {active_driver.soyad}) tarafından kullanılıyor!', 'danger')
         return redirect(url_for('main.index'))
-        
-    # Eğer plaka başka bir pasif şoförde kaldıysa, onun plakasını temizleyelim (çakışmayı önlemek için)
-    for drv in other_drivers:
-        drv.arac_plaka = ""
-        
+            
+    # Plakanın diğer pasif şoförlerden silinmesi engellendi, böylece tüm plakalar korunur.
+    # (for drv in other_drivers: drv.arac_plaka = "")
+    
     current_user.arac_plaka = plaka
     db.session.commit()
     flash(f'Araç plakası {plaka} olarak başarıyla eşleştirildi!', 'success')
@@ -375,8 +373,7 @@ def vardiya_bitir():
     shift.analiz_sonucu = durum
     shift.analiz_detay = detay
     
-    # Vardiya bittiğinde araç plakasını da serbest bırakıyoruz
-    current_user.arac_plaka = ""
+    # Vardiya bittiğinde araç plakasının kalıcı olarak saklanması sağlandı
     db.session.commit()
     
     return jsonify({

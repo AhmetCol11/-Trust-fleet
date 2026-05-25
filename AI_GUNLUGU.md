@@ -48,6 +48,13 @@ Bu günlük, **TrustFleet Sürüş Güvenlik ve Merkez Takip Sistemi** üzerinde
     *   Profil fotoğrafı yüklenmeyen kullanıcılar için **UI Avatars** entegrasyonu ile dinamik ve şık baş harf avatarları üretildi.
     *   Şoför Paneli (`index.html`) ve Yolcu Sayfaları (`yolcu_plaka_sorgula.html`, `yolcu.html`) üst barlarına kullanıcının profil fotoğrafı ve profil ayarları butonu entegre edildi.
 
+### 9. 🚌 Otobüs Plakalarının Kalıcı Hale Getirilmesi
+*   **Sorun**: Şoför çıkış yaptığında veya vardiyayı bitirdiğinde, veritabanındaki plaka bilgisi otomatik olarak silindiği (`""`) için, yolcu sorgulama ekranında şoförlerin eklediği yeni plakalar kayboluyordu.
+*   **Çözüm**:
+    *   `auth/routes.py` dosyasındaki `logout` ve `main/routes.py` dosyasındaki `vardiya_bitir` rotalarından plakanın otomatik temizlenmesi kaldırıldı.
+    *   `arac_plaka_sec` rotasında, başka bir şoför plaka değiştirdiğinde eski şoförün plakasının veritabanından silinmesi engellendi.
+    *   Bu sayede tüm yeni eklenen veya kullanılan plakalar, yolcu panelindeki "Demo / Aktif Plakalar" listesinde her zaman kalıcı ve test edilebilir olarak korundu.
+
 ---
 
 ## 📈 Proje Sağlık Durumu (Health Status)

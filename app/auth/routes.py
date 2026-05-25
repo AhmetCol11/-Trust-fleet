@@ -76,9 +76,6 @@ def login():
 
 @bp.route('/logout')
 def logout():
-    if current_user.is_authenticated:
-        current_user.arac_plaka = ""
-        db.session.commit()
     logout_user()
     return redirect(url_for('auth.login'))
 
