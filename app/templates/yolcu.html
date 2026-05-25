@@ -54,11 +54,21 @@
 </style>
 
 <div class="row align-items-center mb-4 mt-3 px-3">
-    <div class="col-8">
-        <h5 class="text-secondary mb-0">Yolcu: <b>{{ session.get('yolcu_ad') }}</b></h5>
-        <small class="text-muted"><i class="fa-solid fa-envelope me-1"></i> {{ session.get('yolcu_email') }}</small>
+    <div class="col-8 d-flex align-items-center gap-3">
+        <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; border: 2px solid #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.3); flex-shrink: 0;">
+            {% if yolcu.profil_resmi %}
+                <img src="{{ url_for('static', filename='uploads/avatars/' + yolcu.profil_resmi) }}" alt="PP" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+                <img src="https://ui-avatars.com/api/?name={{ yolcu.ad_soyad }}&background=10b981&color=fff&size=100&bold=true" alt="PP" style="width: 100%; height: 100%; object-fit: cover;">
+            {% endif %}
+        </div>
+        <div>
+            <h5 class="text-secondary mb-0">Yolcu: <b>{{ yolcu.ad_soyad }}</b></h5>
+            <small class="text-muted"><i class="fa-solid fa-envelope me-1"></i> {{ yolcu.email }}</small>
+        </div>
     </div>
     <div class="col-4 text-end">
+        <a href="{{ url_for('main.profil') }}" class="btn btn-outline-success btn-sm fw-bold me-2"><i class="fa-solid fa-user-gear"></i> Profilim</a>
         <a href="{{ url_for('main.yolcu_plaka_sorgula') }}" class="btn btn-outline-info btn-sm fw-bold me-2"><i class="fa-solid fa-compass"></i> Farklı Plaka Sorgula</a>
         <a href="{{ url_for('auth.yolcu_logout') }}" class="btn btn-outline-danger btn-sm fw-bold"><i class="fa-solid fa-arrow-right-from-bracket"></i> Çıkış</a>
     </div>

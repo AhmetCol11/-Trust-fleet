@@ -26,7 +26,7 @@ def update_soforler_schema():
         elif "NOT NULL" in sql_str and "arac_plaka" in sql_str:
             has_unique_plaka = True
             
-    needs_email = 'email' not in columns or 'reset_token' not in columns
+    needs_email = 'email' not in columns or 'reset_token' not in columns or 'profil_resmi' not in columns
     
     if has_unique_plaka or needs_email:
         try:
@@ -43,7 +43,8 @@ def update_soforler_schema():
                     sifre_hash    TEXT NOT NULL,
                     sifre_plain   TEXT,
                     reset_token   TEXT,
-                    reset_token_expiry TEXT
+                    reset_token_expiry TEXT,
+                    profil_resmi  TEXT
                 )
             """)
             
@@ -51,10 +52,11 @@ def update_soforler_schema():
             email_col = "email" if 'email' in columns else "NULL"
             reset_token_col = "reset_token" if 'reset_token' in columns else "NULL"
             reset_token_expiry_col = "reset_token_expiry" if 'reset_token_expiry' in columns else "NULL"
+            profil_resmi_col = "profil_resmi" if 'profil_resmi' in columns else "NULL"
             
             cur.execute(f"""
-                INSERT INTO soforler (id, ad, soyad, kullanici_adi, email, arac_plaka, sifre_hash, sifre_plain, reset_token, reset_token_expiry)
-                SELECT id, ad, soyad, kullanici_adi, {email_col}, COALESCE(arac_plaka, ''), sifre_hash, sifre_plain, {reset_token_col}, {reset_token_expiry_col} FROM soforler_old
+                INSERT INTO soforler (id, ad, soyad, kullanici_adi, email, arac_plaka, sifre_hash, sifre_plain, reset_token, reset_token_expiry, profil_resmi)
+                SELECT id, ad, soyad, kullanici_adi, {email_col}, COALESCE(arac_plaka, ''), sifre_hash, sifre_plain, {reset_token_col}, {reset_token_expiry_col}, {profil_resmi_col} FROM soforler_old
             """)
             cur.execute("DROP TABLE soforler_old")
             conn.commit()

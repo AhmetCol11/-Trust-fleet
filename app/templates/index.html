@@ -18,22 +18,32 @@
 </style>
 
 <div class="row align-items-center mb-4">
-    <div class="col-md-9">
-        <h2 class="fw-bold text-light">🛡️ Sürüş Güvenlik Paneli (Şoför)</h2>
-        <p class="text-secondary mb-0">
-            Hoşgeldiniz, <b>{{ current_user.ad }} {{ current_user.soyad }}</b> | 
-            Araç: 
-            {% if current_user.arac_plaka %}
-                <span class="badge bg-warning text-dark fs-6">{{ current_user.arac_plaka }}</span>
-                {% if not vardiya_aktif %}
-                    <a href="{{ url_for('main.arac_plaka_birak') }}" class="btn btn-sm btn-outline-warning ms-2" style="font-size: 0.75rem; padding: 2px 6px;"><i class="fa-solid fa-arrows-rotate"></i> Aracı Değiştir</a>
-                {% endif %}
+    <div class="col-md-9 d-flex align-items-center gap-3">
+        <div style="width: 64px; height: 64px; border-radius: 50%; overflow: hidden; border: 2px solid #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.3); flex-shrink: 0;">
+            {% if current_user.profil_resmi %}
+                <img src="{{ url_for('static', filename='uploads/avatars/' + current_user.profil_resmi) }}" alt="PP" style="width: 100%; height: 100%; object-fit: cover;">
             {% else %}
-                <span class="badge bg-danger fs-6">Henüz Seçilmedi</span>
+                <img src="https://ui-avatars.com/api/?name={{ current_user.ad }}+{{ current_user.soyad }}&background=f59e0b&color=fff&size=100&bold=true" alt="PP" style="width: 100%; height: 100%; object-fit: cover;">
             {% endif %}
-        </p>
+        </div>
+        <div>
+            <h2 class="fw-bold text-light mb-1">🛡️ Sürüş Güvenlik Paneli (Şoför)</h2>
+            <p class="text-secondary mb-0">
+                Hoşgeldiniz, <b>{{ current_user.ad }} {{ current_user.soyad }}</b> | 
+                Araç: 
+                {% if current_user.arac_plaka %}
+                    <span class="badge bg-warning text-dark fs-6">{{ current_user.arac_plaka }}</span>
+                    {% if not vardiya_aktif %}
+                        <a href="{{ url_for('main.arac_plaka_birak') }}" class="btn btn-sm btn-outline-warning ms-2" style="font-size: 0.75rem; padding: 2px 6px;"><i class="fa-solid fa-arrows-rotate"></i> Aracı Değiştir</a>
+                    {% endif %}
+                {% else %}
+                    <span class="badge bg-danger fs-6">Henüz Seçilmedi</span>
+                {% endif %}
+            </p>
+        </div>
     </div>
     <div class="col-md-3 text-end">
+        <a href="{{ url_for('main.profil') }}" class="btn btn-warning fw-bold me-2"><i class="fa-solid fa-user-gear"></i> Profilim</a>
         <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger fw-bold">🚪 Çıkış Yap</a>
     </div>
 </div>

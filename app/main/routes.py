@@ -1,9 +1,12 @@
 from flask import render_template, flash, redirect, url_for, request, jsonify, session
 from flask_login import current_user, login_required
 from datetime import datetime
+import os
+import time
+from werkzeug.utils import secure_filename
 from app import db
 from app.main import bp
-from app.models import Sofor, Alarm, SesLog, YolcuYorum, VardiyaSesKaydi
+from app.models import Sofor, Alarm, SesLog, YolcuYorum, VardiyaSesKaydi, Yolcu
 from app.auth.routes import yolcu_login_required
 
 # Akıllı Türkçe Yorgunluk & Risk Analiz Motoru
@@ -413,7 +416,8 @@ def yolcu_plaka_sorgula():
     soforler = db.session.scalars(
         db.select(Sofor).filter(Sofor.arac_plaka != "", Sofor.arac_plaka != None)
     ).all()
-    return render_template('yolcu_plaka_sorgula.html', title='Otobüs Sorgula', soforler=soforler)
+    yolcu = db.session.get(Yolcu, session['yolcu_id'])
+    return render_template('yolcu_plaka_sorgula.html', title='Otobüs Sorgula', soforler=soforler, yolcu=yolcu)
 
 @bp.route('/yolcu/<int:sofor_id>', methods=['GET', 'POST'])
 @yolcu_login_required
@@ -462,7 +466,8 @@ def yolcu_panel(sofor_id):
         flash('Geri bildiriminiz başarıyla merkeze iletildi. Katkılarınız için teşekkür ederiz!', 'success')
         return redirect(url_for('main.yolcu_panel', sofor_id=sofor_id))
 
-    return render_template('yolcu.html', title='Yolcu Paneli', sofor=sofor)
+    yolcu = db.session.get(Yolcu, session['yolcu_id'])
+    return render_template('yolcu.html', title='Yolcu Paneli', sofor=sofor, yolcu=yolcu)
 
 @bp.route('/api/yolcu_alarm_ekle/<int:sofor_id>', methods=['POST'])
 @yolcu_login_required
@@ -506,4 +511,86 @@ def sofor_konum_guncelle():
         
     db.session.commit()
     return jsonify({"success": True})
+
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@bp.route('/profil', methods=['GET', 'POST'])
+def profil():
+    is_sofor = current_user.is_authenticated
+    is_yolcu = 'yolcu_id' in session
+    
+    if not is_sofor and not is_yolcu:
+        flash('Profil sayfasını görüntülemek için lütfen giriş yapın.', 'warning')
+        return redirect(url_for('auth.login'))
+        
+    user_obj = None
+    role = ''
+    if is_sofor:
+        user_obj = db.session.get(Sofor, current_user.id)
+        role = 'sofor'
+    else:
+        user_obj = db.session.get(Yolcu, session['yolcu_id'])
+        role = 'yolcu'
+        
+    if request.method == 'POST':
+        if role == 'sofor':
+            ad = request.form.get('ad', '').strip()
+            soyad = request.form.get('soyad', '').strip()
+            if not ad or not soyad:
+                flash('Ad ve soyad alanları boş bırakılamaz.', 'danger')
+                return redirect(url_for('main.profil'))
+            user_obj.ad = ad
+            user_obj.soyad = soyad
+        else:
+            ad_soyad = request.form.get('ad_soyad', '').strip()
+            if not ad_soyad:
+                flash('Ad soyad alanı boş bırakılamaz.', 'danger')
+                return redirect(url_for('main.profil'))
+            user_obj.ad_soyad = ad_soyad
+            session['yolcu_ad'] = ad_soyad
+            
+        if 'profil_resmi' in request.files:
+            file = request.files['profil_resmi']
+            if file and file.filename != '':
+                if not allowed_file(file.filename):
+                    flash('Geçersiz dosya formatı! Sadece PNG, JPG, JPEG, GIF yükleyebilirsiniz.', 'danger')
+                    return redirect(url_for('main.profil'))
+                
+                # Boyut kontrolü (2MB)
+                file.seek(0, os.SEEK_END)
+                file_length = file.tell()
+                if file_length > 2 * 1024 * 1024:
+                    flash('Dosya boyutu çok büyük! Maksimum 2MB yükleyebilirsiniz.', 'danger')
+                    return redirect(url_for('main.profil'))
+                file.seek(0)
+                
+                upload_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'static', 'uploads', 'avatars')
+                os.makedirs(upload_folder, exist_ok=True)
+                
+                ext = file.filename.rsplit('.', 1)[1].lower()
+                filename = f"{role}_{user_obj.id}_{int(time.time())}.{ext}"
+                filepath = os.path.join(upload_folder, filename)
+                
+                if user_obj.profil_resmi:
+                    old_path = os.path.join(upload_folder, user_obj.profil_resmi)
+                    if os.path.exists(old_path):
+                        try:
+                            os.remove(old_path)
+                        except Exception:
+                            pass
+                            
+                file.save(filepath)
+                user_obj.profil_resmi = filename
+                
+        db.session.commit()
+        flash('Profiliniz başarıyla güncellendi!', 'success')
+        return redirect(url_for('main.profil'))
+        
+    return render_template('profil.html', title='Profilim', user=user_obj, role=role)
+
 

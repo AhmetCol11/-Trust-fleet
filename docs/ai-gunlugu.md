@@ -205,6 +205,20 @@ Fiziksel GPS donanım gereksinimini yazılımsal simülasyonla aşarak, otobüsl
 - **Zaman Tüneli Premium Arayüz Güncellemesi (`admin.html`):** Merkez Takip Ekranındaki Şoför Zaman Tüneli'nde (`admin.html` "Zaman Tüneli & Ses Kayıtları" sekmesi), hem **Vardiya Giriş/Çıkış Raporları** hem de **Periyodik Sürüş Konuşmaları** kronolojik listesindeki her zaman damgasının yanına şoförün o anki konum koordinatını kırmızı renkte yanıp sönen bir konum rozeti (`badge badge-custom-dark text-danger`) ve zıplayan harita pini ikonu (`fa-location-dot fa-bounce`) ile entegre edildi. Bu sayede merkez operatörünün hangi ses kaydının tam olarak nereden yapıldığını anında görmesi sağlandı.
 
 ---
+
+## Oturum 16: Profil Fotoğrafı ve İsim Güncelleme Özelliği (25 Mayıs 2026)
+
+### Hedef
+Giriş yapan otobüs şoförleri ve yolcuların kendi profil fotoğraflarını (PP) yükleyebilecekleri, kayıt olduktan sonra isim ve fotoğraflarını güncelleyebilecekleri şık ve güvenli bir profil sistemini entegre etmek.
+
+### Teknik Detaylar ve AI Katkısı
+- **SQLite Schema Entegrasyonu:** Bağımsız veritabanı göç scripti `add_profil_resmi.py` hazırlanarak, SQLite üzerinde mevcut şoför ve yolcu verilerine zarar vermeden `profil_resmi` sütunları eklendi. `Sofor` ve `Yolcu` modelleri SQLAlchemy formatında güncellendi.
+- **Güvenli ve Ortak Profil Rotası:** Tek bir `/profil` rotası (`app/main/routes.py`) üzerinden hem Şoför (`current_user`) hem de Yolcu (`session['yolcu_id']`) rolleri ayrıştırıldı. Dosya yüklemelerinde PNG, JPG, JPEG, GIF kontrolleri ve 2MB boyut sınırlaması sunucu tarafında sıkı bir şekilde uygulandı. Yüklenen dosyalar benzersiz isimlendirmelerle (`app/static/uploads/avatars/`) saklandı.
+- **UI Avatars Entegrasyonu:** Kullanıcı ilk kaydolduğunda veya profil resmi yüklemediğinde, isminin baş harflerinden oluşan estetik ve dinamik bir avatar resmi [UI Avatars](https://ui-avatars.com/) aracılığıyla otomatik oluşturuldu.
+- **Modern Glassmorphic Profil Tasarımı (`profil.html`):** Koyu tema mimarimizle %100 uyumlu, neon gölgeli, hover anında yumuşakça kararıp "Değiştir" yazısı çıkan sürükle-seç özellikli şık bir profil kartı arayüzü tasarlandı. JavaScript ile dosya seçildiğinde anında önizleme (`FileReader` preview) yeteneği eklendi.
+- **Kullanıcı Panelleri Entegrasyonu (`index.html`, `yolcu_plaka_sorgula.html`, `yolcu.html`):** Şoför ve yolcu panellerinin üst barlarına kullanıcının güncel profil resmi yuvarlak çerçeve ile eklendi. Yanına ise profil sayfasına giden şık birer "👤 Profilim" butonu entegre edildi.
+
+---
 *(Bu günlük, projenin tamamen şeffaf, sürdürülebilir ve akademik standartlara en üst düzeyde uygun şekilde yazıldığını doğrulamak amacıyla geliştirici ekibimiz tarafından titizlikle oluşturulmuştur.)*
 
 

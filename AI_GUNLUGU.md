@@ -39,6 +39,15 @@ Bu günlük, **TrustFleet Sürüş Güvenlik ve Merkez Takip Sistemi** üzerinde
 *   **Sorun**: Sesli asistanın şoförden yanıt beklerken kullandığı *"Lütfen sözel olarak cevap verin"* ifadesi kulağa yapay geliyordu.
 *   **Çözüm**: `index.html` içerisindeki ses sentezleme motoru güncellenerek ifade çok daha doğal ve profesyonel olan **"Lütfen sesli olarak cevap verin"** şeklinde revize edildi.
 
+### 8. 👤 Profil Fotoğrafı ve İsim Güncelleme Özelliği
+*   **Sorun**: Giriş yapan şoförler ve yolcular kayıt olduktan sonra isimlerini ve profil fotoğraflarını (PP) değiştiremiyor veya yükleyemiyorlardı.
+*   **Çözüm**:
+    *   `Sofor` ve `Yolcu` modellerine SQLite veritabanı üzerinden veri kaybı yaşatmadan `profil_resmi` sütunları eklendi.
+    *   Tek ve ortak bir `/profil` rotası ve premium tasarıma sahip `profil.html` sayfası oluşturuldu.
+    *   Resim yükleme esnasında güvenlik kuralları (PNG/JPG/JPEG/GIF formatları, maks 2MB dosya boyutu) uygulandı ve benzersiz isimlerle (`app/static/uploads/avatars/`) saklandı.
+    *   Profil fotoğrafı yüklenmeyen kullanıcılar için **UI Avatars** entegrasyonu ile dinamik ve şık baş harf avatarları üretildi.
+    *   Şoför Paneli (`index.html`) ve Yolcu Sayfaları (`yolcu_plaka_sorgula.html`, `yolcu.html`) üst barlarına kullanıcının profil fotoğrafı ve profil ayarları butonu entegre edildi.
+
 ---
 
 ## 📈 Proje Sağlık Durumu (Health Status)

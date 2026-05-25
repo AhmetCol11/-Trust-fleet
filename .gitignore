@@ -5,3 +5,6 @@ __pycache__/
 instance/
 *.sqlite3
 .pytest_cache/
+*_backup.py
+*_backup.html
+sofor_guvenlik.db

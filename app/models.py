@@ -22,6 +22,7 @@ class Sofor(UserMixin, db.Model):
     sifre_plain: Mapped[Optional[str]] = mapped_column(String(255))
     reset_token: Mapped[Optional[str]] = mapped_column(String(100))
     reset_token_expiry: Mapped[Optional[str]] = mapped_column(String(50))
+    profil_resmi: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     alarmlar: Mapped[List["Alarm"]] = relationship(back_populates="sofor")
     ses_loglari: Mapped[List["SesLog"]] = relationship(back_populates="sofor")
@@ -40,7 +41,8 @@ class Sofor(UserMixin, db.Model):
             "kullanici_adi": self.kullanici_adi,
             "arac_plaka": self.arac_plaka,
             "sifre_hash": self.sifre_hash,
-            "sifre_plain": self.sifre_plain
+            "sifre_plain": self.sifre_plain,
+            "profil_resmi": self.profil_resmi
         }
 
 class Alarm(db.Model):
@@ -126,6 +128,7 @@ class Yolcu(db.Model):
     kayit_tarihi: Mapped[str] = mapped_column(String(50), nullable=False, default=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     reset_token: Mapped[Optional[str]] = mapped_column(String(100))
     reset_token_expiry: Mapped[Optional[str]] = mapped_column(String(50))
+    profil_resmi: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     yorumlar: Mapped[List["YolcuYorum"]] = relationship(back_populates="yolcu")
 
@@ -137,7 +140,8 @@ class Yolcu(db.Model):
             "id": self.id,
             "ad_soyad": self.ad_soyad,
             "email": self.email,
-            "kayit_tarihi": self.kayit_tarihi
+            "kayit_tarihi": self.kayit_tarihi,
+            "profil_resmi": self.profil_resmi
         }
 
 class YolcuYorum(db.Model):
