@@ -3,6 +3,7 @@
 **Geliştirici:** [Ahmet ÇÖL]
 **Öğrenci No:** [25380102032]
 **Kurum:** Gazi Üniversitesi - TUSAŞ Kazan Meslek Yüksek Okulu
+**Proje Sunum ve Demo Videosu:** [Google Drive Üzerinden İzlemek İçin Tıklayın](https://drive.google.com/file/d/1RLi8e4AEj9EOf3IYA6suH73Vsbuz-BFH/view?usp=drive_link)
 
 ---
 
