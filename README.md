@@ -125,8 +125,7 @@ Sistemi değerlendirirken kullanabileceğiniz aktif demo hesapları aşağıda l
 
 ## 🎥 Proje Tanıtım & Demo Videosu
 
-Uygulamanın tüm özelliklerini, şoför ses tanıma / doğrulamalarını, karşılaştırmalı yorgunluk analizi akışlarını ve merkez kontrol panelinin canlı GPS takip sistemini içeren **3-5 dakikalık tanıtım ve demo videosuna** aşağıdaki bağlantıdan erişebilirsiniz:
-*   🔗 **[YouTube veya Google Drive Video Linki Buraya Gelecek]**
+*   🔗 **[Google Drive Sunum ve Çalışma Videosunu İzlemek İçin Tıklayın](https://drive.google.com/file/d/1RLi8e4AEj9EOf3IYA6suH73Vsbuz-BFH/view?usp=drive_link)**
 
 ---
 
