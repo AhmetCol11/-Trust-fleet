@@ -339,23 +339,11 @@
                                         </div>
                                     </div>
                                     
-                                    <!-- Kimlik ve Şifre Bilgisi -->
+                                    <!-- Kimlik Bilgisi -->
                                     <div class="text-start text-md-end">
                                         <div class="mb-1">
                                             <small class="text-secondary me-1">Kullanıcı Adı:</small>
                                             <span class="badge badge-custom-dark text-info fw-bold badge-code px-2 py-1"><i class="fa-solid fa-user me-1 opacity-75"></i> {{ s.kullanici_adi }}</span>
-                                        </div>
-                                        <div>
-                                            <small class="text-secondary me-1">Açık Giriş Şifresi:</small>
-                                            {% if s.sifre_plain %}
-                                                <span class="badge badge-custom-danger fw-bold badge-code px-2 py-1">
-                                                    <i class="fa-solid fa-key me-1 opacity-75"></i> {{ s.sifre_plain }}
-                                                </span>
-                                            {% else %}
-                                                <span class="badge badge-custom-dark text-muted fw-bold badge-code px-2 py-1">
-                                                    <i class="fa-solid fa-key-skeleton me-1 opacity-50"></i> Şifre Yok
-                                                </span>
-                                            {% endif %}
                                         </div>
                                     </div>
                                     

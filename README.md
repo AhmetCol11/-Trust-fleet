@@ -36,7 +36,7 @@ Sistem, birbirine entegre çalışan üç ana kontrol katmanından oluşmaktadı
 *   **Kritik Canlı Alarmlar Paneli:** Panik butonlarından ve yanıtsızlık asistanından gelen tüm acil bildirimleri titreyen kırmızı neon çerçeveli (`pulse-danger-card`) olarak en tepede sergileyen canlı izleme paneli.
 *   **Zaman Tüneli Ses Kayıtları (Timeline Log):** Her şoförün tüm ses geçmişini, vardiya giriş/çıkış analizlerini ve sürüş esnasındaki periyodik asistan konuşmalarını kronolojik olarak yan yana listeleyen modüler yapı.
 *   **Şoför Gruplu Yolcu Yorumları:** Yolculardan gelen yorumları ve puanları şoför bazlı gruplayan, ekran kalabalığını önlemek için collapsible (açılır-kapanır akordeon) yapıda sunan şık değerlendirme alanı.
-*   **Personel Kartları & Güvenlik Görünümü:** Şoförlerin plaka, kullanıcı adı ve açık şifre bilgilerini (`sifre_plain`) içeren modern personel kimlik kartları.
+*   **Personel Kartları & Güvenlik Görünümü:** Şoförlerin plaka ve kullanıcı adı bilgilerini içeren modern personel kimlik kartları.
 
 ---
 
