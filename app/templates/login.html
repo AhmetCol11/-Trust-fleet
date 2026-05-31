@@ -348,6 +348,14 @@
 </style>
 
 <div class="login-container" id="loginCard">
+    <!-- Local Language Selector for Login Card -->
+    <div class="local-lang-selector" style="position: absolute; top: 20px; right: 20px; z-index: 100;">
+        <div class="btn-group btn-group-sm rounded bg-dark border border-secondary border-opacity-50" role="group" style="padding: 2px;">
+            <button type="button" id="btnLangTR" class="btn btn-sm py-1 px-2 text-light border-0 fw-bold" onclick="changeLanguage('tr')" style="font-size: 0.75rem; border-radius: 6px; transition: all 0.2s ease;">TR</button>
+            <button type="button" id="btnLangEN" class="btn btn-sm py-1 px-2 text-light border-0 fw-bold" onclick="changeLanguage('en')" style="font-size: 0.75rem; border-radius: 6px; transition: all 0.2s ease;">EN</button>
+        </div>
+    </div>
+
     <div class="logo-outer-wrapper">
         <div class="logo-container">
             <i class="fa-solid fa-bus logo-icon"></i>
@@ -569,10 +577,46 @@
             updateTheme(activeTab.id);
         }
 
+        // Language Toggle active state highlighter
+        function highlightActiveLang(lang) {
+            const tr = document.getElementById('btnLangTR');
+            const en = document.getElementById('btnLangEN');
+            if (!tr || !en) return;
+            
+            // Get active card theme to match color!
+            let activeColor = '#f59e0b'; // Driver Amber default
+            if (loginCard.classList.contains('theme-yolcu')) {
+                activeColor = '#10b981'; // Passenger Emerald
+            } else if (loginCard.classList.contains('theme-admin')) {
+                activeColor = '#06b6d4'; // Admin Cyan
+            }
+            
+            if (lang === 'tr') {
+                tr.style.background = activeColor;
+                tr.style.color = '#0e1117';
+                en.style.background = 'transparent';
+                en.style.color = 'rgba(255, 255, 255, 0.6)';
+            } else {
+                en.style.background = activeColor;
+                en.style.color = '#0e1117';
+                tr.style.background = 'transparent';
+                tr.style.color = 'rgba(255, 255, 255, 0.6)';
+            }
+        }
+        
+        // Listen to changes
+        window.addEventListener('languageChanged', function(e) {
+            highlightActiveLang(e.detail.lang);
+        });
+        
+        // Initial load highlight
+        highlightActiveLang(window.currentLanguage);
+
         // Set dynamic listeners for tab switch transitions
         tabButtons.forEach(btn => {
             btn.addEventListener('shown.bs.tab', function (event) {
                 updateTheme(event.target.id);
+                highlightActiveLang(window.currentLanguage);
             });
         });
     });
