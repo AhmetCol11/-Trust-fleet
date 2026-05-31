@@ -165,11 +165,11 @@
 
 <div class="row align-items-center mb-4 mt-3">
     <div class="col-md-9">
-        <h2 class="fw-bold text-light"><i class="fa-solid fa-satellite-dish text-danger fa-pulse me-2"></i> Merkez Yönetim & Canlı Takip</h2>
-        <p class="text-secondary">Şoför güvenliği, sesli diyalog analizleri ve yolcu geri bildirimleri tek çatı altında.</p>
+        <h2 class="fw-bold text-light" data-translate="admin_panel_title"><i class="fa-solid fa-satellite-dish text-danger fa-pulse me-2"></i> Merkez Yönetim & Canlı Takip</h2>
+        <p class="text-secondary" data-translate="admin_subtitle">Şoför güvenliği, sesli diyalog analizleri ve yolcu geri bildirimleri tek çatı altında.</p>
     </div>
     <div class="col-md-3 text-end">
-        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger fw-bold border-2 px-3 py-2"><i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Panelden Çıkış</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger fw-bold border-2 px-3 py-2"><i class="fa-solid fa-arrow-right-from-bracket me-1"></i> <span data-translate="btn_logout">Panelden Çıkış</span></a>
     </div>
 </div>
 
@@ -180,22 +180,22 @@
 <ul class="nav nav-pills nav-justified mb-4 p-2 rounded shadow-lg" id="adminTabs" role="tablist">
     <li class="nav-item" role="presentation">
         <button class="nav-link active fw-bold py-3 border-0" id="comments-tab" data-bs-toggle="tab" data-bs-target="#commentsPanel" type="button" role="tab" aria-controls="commentsPanel" aria-selected="true">
-            <i class="fa-solid fa-comments me-2"></i> Yolcu Şikayetleri & Değerlendirmeleri
+            <i class="fa-solid fa-comments me-2"></i> <span data-translate="tab_passenger_comments">Yolcu Şikayetleri & Değerlendirmeleri</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-bold py-3 border-0" id="drivers-tab" data-bs-toggle="tab" data-bs-target="#driversPanel" type="button" role="tab" aria-controls="driversPanel" aria-selected="false">
-            <i class="fa-solid fa-user-shield me-2"></i> Şoför Bilgileri & Canlı Alarmlar
+            <i class="fa-solid fa-user-shield me-2"></i> <span data-translate="tab_live_alerts">Şoför Bilgileri & Canlı Alarmlar</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-bold py-3 border-0" id="voice-tab" data-bs-toggle="tab" data-bs-target="#voicePanel" type="button" role="tab" aria-controls="voicePanel" aria-selected="false">
-            <i class="fa-solid fa-wave-square me-2"></i> Şoför Ses Kayıtları
+            <i class="fa-solid fa-wave-square me-2"></i> <span data-translate="tab_timeline_real">Şoför Ses Kayıtları</span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-bold py-3 border-0" id="map-tab" data-bs-toggle="tab" data-bs-target="#mapPanel" type="button" role="tab" aria-controls="mapPanel" aria-selected="false">
-            <i class="fa-solid fa-map-location-dot me-2 text-danger"></i> 🗺️ Canlı GPS Harita Takibi
+            <i class="fa-solid fa-map-location-dot me-2 text-danger"></i> <span data-translate="tab_map_tracking">🗺️ Canlı GPS Harita Takibi</span>
         </button>
     </li>
 </ul>
@@ -235,17 +235,17 @@
                                     </div>
                                     <span class="badge badge-custom-warning mt-1">{{ count }} Değerlendirme</span>
                                 {% else %}
-                                    <span class="badge badge-custom-dark text-muted mt-1">Geri Bildirim Yok</span>
+                                    <span class="badge badge-custom-dark text-muted mt-1" data-translate="no_comments_yet">Geri Bildirim Yok</span>
                                 {% endif %}
                             </div>
                         </div>
                         
                         <div class="card-body p-4 d-flex flex-column justify-content-between">
                             {% if count > 0 %}
-                                <p class="text-secondary small mb-3">Yolculardan gelen sürüş derecelendirmelerini ve kritik şikayet etiketlerini görüntülemek için aşağıdaki açılır paneli genişletin.</p>
+                                <p class="text-secondary small mb-3" data-translate="comments_desc">Yolculardan gelen sürüş derecelendirmelerini ve kritik şikayet etiketlerini görüntülemek için aşağıdaki açılır paneli genişletin.</p>
                                 
                                 <button class="btn btn-outline-info w-100 fw-bold py-2 d-flex align-items-center justify-content-between border-2" type="button" data-bs-toggle="collapse" data-bs-target="#yorumlarCollapse-{{ s.id }}" aria-expanded="false" aria-controls="yorumlarCollapse-{{ s.id }}">
-                                    <span><i class="fa-solid fa-comments me-2"></i> Şikayet & Yorumları İncele</span>
+                                    <span><i class="fa-solid fa-comments me-2"></i> <span data-translate="comments_section">Şikayet & Yorumları İncele</span></span>
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </button>
                                 
@@ -299,7 +299,7 @@
                             {% else %}
                                 <div class="text-center py-5 text-muted">
                                     <i class="fa-solid fa-face-meh fa-3x mb-3 opacity-30"></i>
-                                    <p class="mb-0 small">Bu şoför için henüz yolculardan herhangi bir geri bildirim veya şikayet kaydı bulunmuyor.</p>
+                                    <p class="mb-0 small" data-translate="no_comments_yet">Bu şoför için henüz yolculardan herhangi bir geri bildirim veya şikayet kaydı bulunmuyor.</p>
                                 </div>
                             {% endif %}
                         </div>
@@ -321,7 +321,7 @@
             <!-- Sol Kısım: Tüm Şoförlerin Detaylı Profil Kartları (Şifre & Kullanıcı Adları) -->
             <div class="col-lg-7 mb-4">
                 <div class="card admin-card p-4 h-100">
-                    <h4 class="text-info fw-bold mb-4 border-bottom border-secondary border-opacity-50 pb-2"><i class="fa-solid fa-users me-2"></i> Şoför Personel Kartları</h4>
+                    <h4 class="text-info fw-bold mb-4 border-bottom border-secondary border-opacity-50 pb-2"><i class="fa-solid fa-users me-2"></i> <span data-translate="registered_drivers">Şoför Personel Kartları</span></h4>
                     
                     <div class="custom-scroll pe-1" style="max-height: 520px; overflow-y: auto;">
                         {% for s in soforler %}
@@ -342,7 +342,7 @@
                                     <!-- Kimlik Bilgisi -->
                                     <div class="text-start text-md-end">
                                         <div class="mb-1">
-                                            <small class="text-secondary me-1">Kullanıcı Adı:</small>
+                                            <small class="text-secondary me-1" data-translate="driver_card_user">Kullanıcı Adı:</small>
                                             <span class="badge badge-custom-dark text-info fw-bold badge-code px-2 py-1"><i class="fa-solid fa-user me-1 opacity-75"></i> {{ s.kullanici_adi }}</span>
                                         </div>
                                     </div>
@@ -369,14 +369,14 @@
             <div class="col-lg-5 mb-4">
                 <div class="card admin-card p-4 h-100 pulse-danger-card" style="background: linear-gradient(135deg, #1c0e10, #1e2129) !important; border-color: rgba(220, 53, 69, 0.25) !important;">
                     <h4 class="text-danger fw-bold mb-4 d-flex align-items-center justify-content-between border-bottom border-danger border-opacity-25 pb-2">
-                        <span><i class="fa-solid fa-bell-exclamation text-danger me-2"></i> ÇOK ACİL BİLDİRİMLER</span>
+                        <span><i class="fa-solid fa-bell-exclamation text-danger me-2"></i> <span data-translate="live_alerts_section">ÇOK ACİL BİLDİRİMLER</span></span>
                         <div class="d-flex align-items-center gap-2">
                             <span class="pulse-dot"></span>
                             <span class="badge bg-danger text-light px-2 py-1 small fw-bold">{{ alarmlar_pagination.total }} UYARI</span>
                         </div>
                     </h4>
                     
-                    <p class="text-secondary small mb-3">Panik butonları veya akıllı asistan uykusuzluk dedektörü tarafından saptanan en kritik uyarılar anlık olarak aşağıda listelenir. Sayfa {{ alarmlar_pagination.page }}/{{ alarmlar_pagination.pages }}.</p>
+                    <p class="text-secondary small mb-3" data-translate="live_alerts_desc">Panik butonları veya akıllı asistan uykusuzluk dedektörü tarafından saptanan en kritik uyarılar anlık olarak aşağıda listelenir.</p>
                     
                     <div class="custom-scroll pe-1" style="max-height: 380px; overflow-y: auto;">
                         {% for a in alarmlar %}
@@ -400,8 +400,8 @@
                         {% else %}
                             <div class="text-center py-5 text-muted">
                                 <i class="fa-solid fa-shield-halved fa-4x text-success mb-3 opacity-30"></i>
-                                <h5 class="fw-bold text-success">Sistem Güvenli</h5>
-                                <p class="mb-0 small">Aktif herhangi bir panik uyarısı veya acil asistan alarmı saptanmadı.</p>
+                                <h5 class="fw-bold text-success" data-translate="no_alerts_yet">Sistem Güvenli</h5>
+                                <p class="mb-0 small" data-translate="no_alerts_yet">Aktif herhangi bir panik uyarısı veya acil asistan alarmı saptanmadı.</p>
                             </div>
                         {% endfor %}
                     </div>
@@ -449,8 +449,8 @@
     <!-- PANEL 3: Şoför Ses Kayıtları (Timeline - Şoför Bazlı Ayrıştırılmış Zaman Tüneli) -->
     <div class="tab-pane fade" id="voicePanel" role="tabpanel" aria-labelledby="voice-tab">
         <div class="card admin-card p-4">
-            <h4 class="text-info fw-bold mb-3"><i class="fa-solid fa-microphone-lines me-2 text-danger"></i> Şoför Zaman Tüneli & Ses Kayıtları</h4>
-            <p class="text-secondary small mb-4">Her şoför için ayrı bölümlendirilmiş akordeon başlıklarını açarak vardiya başlangıç/kapanış analizlerini ve sürüş periyodik konuşmalarını gözünüz yorulmadan takip edebilirsiniz.</p>
+            <h4 class="text-info fw-bold mb-3"><i class="fa-solid fa-microphone-lines me-2 text-danger"></i> <span data-translate="tab_timeline_real">Şoför Zaman Tüneli & Ses Kayıtları</span></h4>
+            <p class="text-secondary small mb-4" data-translate="timeline_desc">Her şoför için ayrı bölümlendirilmiş akordeon başlıklarını açarak vardiya başlangıç/kapanış analizlerini ve sürüş periyodik konuşmalarını gözünüz yorulmadan takip edebilirsiniz.</p>
             
             <div class="accordion shadow-lg" id="soforSesAccordion">
                 {% for s in soforler %}
@@ -483,7 +483,7 @@
                                     
                                     <!-- Sol Kol: Vardiya Başlangıç / Kapanış & Karşılaştırmalı Yorgunluk Analiz Raporları -->
                                     <div class="col-lg-6 mb-4 mb-lg-0 border-end border-secondary border-opacity-30 pe-lg-4">
-                                        <h5 class="text-warning fw-bold mb-3 pb-2 border-bottom border-secondary border-opacity-50 d-flex align-items-center"><i class="fa-solid fa-clock-rotate-left me-2"></i> Vardiya Giriş/Çıkış Raporları</h5>
+                                        <h5 class="text-warning fw-bold mb-3 pb-2 border-bottom border-secondary border-opacity-50 d-flex align-items-center"><i class="fa-solid fa-clock-rotate-left me-2"></i> <span data-translate="timeline_section">Vardiya Giriş/Çıkış Raporları</span></h5>
                                         
                                         <div class="custom-scroll pe-2" style="max-height: 480px; overflow-y: auto;">
                                             {% for vk in s_vardiyalar | sort(attribute='id', reverse=True) %}

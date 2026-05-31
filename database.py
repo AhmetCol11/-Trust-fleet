@@ -388,7 +388,10 @@ def yorgunluk_analizi_yap(baslangic_metni: str, bitis_metni: str, baslangic_sure
         "uyku", "uyuyakaldım", "uyukluyorum", "gözlerim kapanıyor",
         "baş ağrısı", "başım ağrıyor", "baş dönüyor",
         "mola istiyorum", "kötüyüm", "iyi değilim",
-        "zor", "dayanamıyorum", "argın"
+        "zor", "dayanamıyorum", "argın",
+        # English fatigue keywords
+        "tired", "sleepy", "exhausted", "headache", "dizzy",
+        "need a break", "bad", "not good", "hard", "cannot stand", "sleep", "worn out", "fatigued"
     ]
 
     bas_kelime  = len(baslangic_metni.split()) if baslangic_metni else 0
@@ -446,7 +449,10 @@ def periyodik_yorgunluk_analizi_yap(sofor_id: int, metin: str):
         "uyku", "uyuyakaldım", "uyukluyorum", "gözlerim kapanıyor",
         "baş ağrısı", "başım ağrıyor", "baş dönüyor",
         "mola istiyorum", "kötüyüm", "iyi değilim",
-        "zor", "dayanamıyorum", "argın", "halsizim", "bitkinim", "uykum"
+        "zor", "dayanamıyorum", "argın", "halsizim", "bitkinim", "uykum",
+        # English fatigue keywords
+        "tired", "sleepy", "exhausted", "headache", "dizzy",
+        "need a break", "bad", "not good", "hard", "cannot stand", "sleep", "worn out", "fatigued"
     ]
     tehlikeli = any(k in clean_text.lower() for k in yorgunluk_kelimeleri)
     

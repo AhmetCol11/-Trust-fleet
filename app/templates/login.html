@@ -352,23 +352,23 @@
         <div class="logo-container">
             <i class="fa-solid fa-bus logo-icon"></i>
         </div>
-        <h2 class="fw-extrabold text-light mb-1">TrustFleet</h2>
-        <p class="text-secondary small">Sürüş Güvenlik ve Merkez Takip Sistemi</p>
+        <h2 class="fw-extrabold text-light mb-1" data-translate="brand_name">TrustFleet</h2>
+        <p class="text-secondary small" data-translate="login_subtitle">Sürüş Güvenlik ve Merkez Takip Sistemi</p>
     </div>
 
     <!-- Sekmeler (Role tabs) -->
     <ul class="nav custom-nav-tabs" id="loginTabs" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="yolcu-tab" data-bs-toggle="tab" data-bs-target="#yolcu" type="button"
-                role="tab"><i class="fa-solid fa-users"></i> Yolcu Girişi</button>
+                role="tab"><i class="fa-solid fa-users"></i> <span data-translate="tab_passenger">Yolcu Girişi</span></button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="sofor-tab" data-bs-toggle="tab" data-bs-target="#sofor" type="button"
-                role="tab"><i class="fa-solid fa-id-card"></i> 👨‍✈️ Şoför Girişi</button>
+                role="tab"><i class="fa-solid fa-id-card"></i> <span data-translate="tab_driver">👨‍✈️ Şoför Girişi</span></button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button"
-                role="tab"><i class="fa-solid fa-building-shield"></i> Merkez</button>
+                role="tab"><i class="fa-solid fa-building-shield"></i> <span data-translate="tab_admin">Merkez</span></button>
         </li>
     </ul>
 
@@ -378,33 +378,33 @@
         <!-- YOLCU SEKMESİ -->
         <div class="tab-pane fade show active" id="yolcu" role="tabpanel">
             <div class="text-center mb-4">
-                <h4 class="fw-bold text-light mb-2">Yolcu Girişi</h4>
-                <p class="text-secondary small">Seyahatlerinizi değerlendirmek için üye girişi yapın.</p>
+                <h4 class="fw-bold text-light mb-2" data-translate="tab_passenger">Yolcu Girişi</h4>
+                <p class="text-secondary small" data-translate="passenger_desc">Seyahatlerinizi değerlendirmek için üye girişi yapın.</p>
             </div>
 
             <form action="" method="post" novalidate>
                 <input type="hidden" name="login_type" value="yolcu">
 
                 <div class="mb-4">
-                    <label class="form-label fw-semibold text-light mb-2">E-posta Adresi</label>
+                    <label class="form-label fw-semibold text-light mb-2" data-translate="username_label">E-posta Adresi</label>
                     <div class="input-icon-group">
                         <i class="fa-solid fa-envelope"></i>
                         <input type="email" name="yolcu_email" class="form-control" required
-                            placeholder="E-posta adresiniz">
+                            placeholder="E-posta adresiniz" data-translate="username_placeholder">
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-semibold text-light mb-2">Şifre</label>
+                    <label class="form-label fw-semibold text-light mb-2" data-translate="password_label">Şifre</label>
                     <div class="input-icon-group">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="yolcu_sifre" class="form-control" required placeholder="Şifreniz">
+                        <input type="password" name="yolcu_sifre" class="form-control" required placeholder="Şifreniz" data-translate="password_placeholder">
                     </div>
                 </div>
 
                 <div class="pt-2">
                     <button type="submit" class="btn-premium-submit btn-yolcu">
-                        <i class="fa-solid fa-right-to-bracket"></i> Yolcu Girişi Yap
+                        <i class="fa-solid fa-right-to-bracket"></i> <span data-translate="btn_login_passenger">Yolcu Girişi Yap</span>
                     </button>
                 </div>
 
@@ -420,8 +420,8 @@
         <!-- ŞOFÖR SEKMESİ -->
         <div class="tab-pane fade" id="sofor" role="tabpanel">
             <div class="text-center mb-4">
-                <h4 class="fw-bold text-light mb-2">Şoför Kontrol Paneli Girişi</h4>
-                <p class="text-secondary small">Güvenli sürüş doğrulaması ve asistan için oturum açın.</p>
+                <h4 class="fw-bold text-light mb-2" data-translate="driver_desc">Şoför Kontrol Paneli Girişi</h4>
+                <p class="text-secondary small" data-translate="driver_desc">Güvenlik sürüş doğrulaması ve asistan için oturum açın.</p>
             </div>
 
             <form action="" method="post" novalidate>
@@ -429,24 +429,24 @@
                 <input type="hidden" name="login_type" value="sofor">
 
                 <div class="mb-4">
-                    {{ form.kullanici_adi.label(class="form-label fw-semibold text-light mb-2") }}
+                    <label class="form-label fw-semibold text-light mb-2" data-translate="username_label">Kullanıcı Adı</label>
                     <div class="input-icon-group">
                         <i class="fa-solid fa-user"></i>
-                        {{ form.kullanici_adi(class="form-control", placeholder="Kullanıcı Adınız") }}
+                        {{ form.kullanici_adi(class="form-control", placeholder="Kullanıcı Adınız", **{"data-translate": "username_placeholder"}) }}
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    {{ form.sifre.label(class="form-label fw-semibold text-light mb-2") }}
+                    <label class="form-label fw-semibold text-light mb-2" data-translate="password_label">Giriş Şifresi</label>
                     <div class="input-icon-group">
                         <i class="fa-solid fa-lock"></i>
-                        {{ form.sifre(class="form-control", placeholder="Şifreniz") }}
+                        {{ form.sifre(class="form-control", placeholder="Şifreniz", **{"data-translate": "password_placeholder"}) }}
                     </div>
                 </div>
 
                 <div class="pt-2">
                     <button type="submit" name="submit" value="Giriş Yap" class="btn-premium-submit btn-sofor">
-                        <i class="fa-solid fa-key"></i> Şoför Paneline Giriş Yap
+                        <i class="fa-solid fa-key"></i> <span data-translate="btn_login_driver">Şoför Paneline Giriş Yap</span>
                     </button>
                 </div>
 
@@ -462,33 +462,33 @@
         <!-- ADMİN SEKMESİ -->
         <div class="tab-pane fade" id="admin" role="tabpanel">
             <div class="text-center mb-4">
-                <h4 class="fw-bold text-light mb-2">Merkez Yönetim Girişi</h4>
-                <p class="text-secondary small">Yetkili merkez personeli canlı izleme ve raporlama girişi.</p>
+                <h4 class="fw-bold text-light mb-2" data-translate="tab_admin">Merkez Yönetim Girişi</h4>
+                <p class="text-secondary small" data-translate="admin_desc">Yetkili merkez personeli canlı izleme ve raporlama girişi.</p>
             </div>
 
             <form action="" method="post">
                 <input type="hidden" name="login_type" value="admin">
 
                 <div class="mb-4">
-                    <label class="form-label fw-semibold text-light mb-2">Kullanıcı Adı</label>
+                    <label class="form-label fw-semibold text-light mb-2" data-translate="username_label">Kullanıcı Adı</label>
                     <div class="input-icon-group">
                         <i class="fa-solid fa-user-shield"></i>
                         <input type="text" name="kullanici_adi" class="form-control" required
-                            placeholder="Kullanıcı adı">
+                            placeholder="Kullanıcı adı" data-translate="username_placeholder">
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-semibold text-light mb-2">Şifre</label>
+                    <label class="form-label fw-semibold text-light mb-2" data-translate="password_label">Şifre</label>
                     <div class="input-icon-group">
                         <i class="fa-solid fa-lock"></i>
-                        <input type="password" name="sifre" class="form-control" required placeholder="Şifreniz">
+                        <input type="password" name="sifre" class="form-control" required placeholder="Şifreniz" data-translate="password_placeholder">
                     </div>
                 </div>
 
                 <div class="pt-2">
                     <button type="submit" class="btn-premium-submit btn-admin">
-                        <i class="fa-solid fa-shield-halved"></i> Merkez Sistemine Bağlan
+                        <i class="fa-solid fa-shield-halved"></i> <span data-translate="btn_login_admin">Merkez Sistemine Bağlan</span>
                     </button>
                 </div>
             </form>
@@ -501,38 +501,38 @@
 <div class="credentials-wrapper">
     <button class="credentials-trigger collapsed" type="button" data-bs-toggle="collapse"
         data-bs-target="#demoCredentials" aria-expanded="false">
-        <span><i class="fa-solid fa-circle-info me-2 text-info"></i> Test & Demo Giriş Bilgileri</span>
+        <span><i class="fa-solid fa-circle-info me-2 text-info"></i> <span data-translate="demo_title">Test & Demo Giriş Bilgileri</span></span>
         <i class="fa-solid fa-chevron-down chevron-icon"></i>
     </button>
     <div class="collapse" id="demoCredentials">
         <div class="credentials-body">
             <div class="row g-3">
                 <div class="col-md-4">
-                    <h6 class="fw-bold text-success mb-2"><i class="fa-solid fa-users"></i> Yolcu Girişi</h6>
-                    <div class="small text-secondary mb-1">Kayıt Olabilir veya Kullanabilirsiniz:</div>
+                    <h6 class="fw-bold text-success mb-2"><i class="fa-solid fa-users"></i> <span data-translate="tab_passenger">Yolcu Girişi</span></h6>
+                    <div class="small text-secondary mb-1" data-translate="demo_desc">Kayıt Olabilir veya Kullanabilirsiniz:</div>
                     <div class="p-2 bg-dark rounded border border-secondary mb-2 small">
                         <span class="text-secondary">E-posta:</span> <code
                             class="text-success">yolcu@test.com</code><br>
-                        <span class="text-secondary">Şifre:</span> <code class="text-light">yolcu123</code>
+                        <span class="text-secondary" data-translate="password_label">Şifre:</span> <code class="text-light">yolcu123</code>
                     </div>
-                    <div class="small text-secondary mb-1">Giriş Sonrası Aktif Plakalar:</div>
+                    <div class="small text-secondary mb-1" data-translate="active_plates_label">Giriş Sonrası Aktif Plakalar:</div>
                     <span class="badge badge-custom-yolcu d-block mb-1 py-1 fs-6">34 ABC 001</span>
                     <span class="badge badge-custom-yolcu d-block py-1 fs-6">06 XYZ 999</span>
                 </div>
                 <div class="col-md-4">
-                    <h6 class="fw-bold text-warning mb-2"><i class="fa-solid fa-id-card"></i> Şoför Girişi</h6>
-                    <div class="small text-secondary mb-1">Örnek Şoför Hesabı:</div>
+                    <h6 class="fw-bold text-warning mb-2"><i class="fa-solid fa-id-card"></i> <span data-translate="tab_driver">Şoför Girişi</span></h6>
+                    <div class="small text-secondary mb-1" data-translate="demo_driver_info">Örnek Şoför Hesabı:</div>
                     <div class="p-2 bg-dark rounded border border-secondary mb-2 small">
-                        <span class="text-secondary">K.Adı:</span> <code class="text-warning">ahmet</code><br>
-                        <span class="text-secondary">Şifre:</span> <code class="text-light">sifre123</code>
+                        <span class="text-secondary" data-translate="username_label">K.Adı:</span> <code class="text-warning">ahmet</code><br>
+                        <span class="text-secondary" data-translate="password_label">Şifre:</span> <code class="text-light">sifre123</code>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <h6 class="fw-bold text-info mb-2"><i class="fa-solid fa-building-shield"></i> Merkez Girişi</h6>
-                    <div class="small text-secondary mb-1">Yönetici Paneli Girişi:</div>
+                    <h6 class="fw-bold text-info mb-2"><i class="fa-solid fa-building-shield"></i> <span data-translate="tab_admin">Merkez Girişi</span></h6>
+                    <div class="small text-secondary mb-1" data-translate="demo_admin_info">Yönetici Paneli Girişi:</div>
                     <div class="p-2 bg-dark rounded border border-secondary small">
-                        <span class="text-secondary">K.Adı:</span> <code class="text-info">admin</code><br>
-                        <span class="text-secondary">Şifre:</span> <code class="text-light">admin123</code>
+                        <span class="text-secondary" data-translate="username_label">K.Adı:</span> <code class="text-info">admin</code><br>
+                        <span class="text-secondary" data-translate="password_label">Şifre:</span> <code class="text-light">admin123</code>
                     </div>
                 </div>
             </div>
