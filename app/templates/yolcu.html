@@ -77,8 +77,8 @@
 <div class="row justify-content-center">
     <div class="col-md-8 text-center mb-4">
         <i class="fa-solid fa-users fa-4x text-info mb-3"></i>
-        <h2 class="fw-bold">Yolcu Geri Bildirim Paneli</h2>
-        <p class="text-secondary">Seyahat ettiğiniz otobüsün şoförünü değerlendirebilir ve sürüş kalitesi hakkında geri bildirim gönderebilirsiniz.</p>
+        <h2 class="fw-bold" data-translate="passenger_panel_title">Yolcu Geri Bildirim Paneli</h2>
+        <p class="text-secondary" data-translate="passenger_panel_desc">Seyahat ettiğiniz otobüsün şoförünü değerlendirebilir ve sürüş kalitesi hakkında geri bildirim gönderebilirsiniz.</p>
     </div>
 </div>
 
@@ -86,9 +86,9 @@
     <div class="col-md-8 mb-4">
         <!-- Şoför Bilgi Kartı -->
         <div class="streamlit-container mt-0 text-center premium-card py-4">
-            <h5 class="text-warning mb-2"><i class="fa-solid fa-id-card text-warning"></i> 👨‍✈️ Otobüs Şoförünüz</h5>
+            <h5 class="text-warning mb-2"><i class="fa-solid fa-id-card text-warning"></i> <span data-translate="driver_info_title">👨‍✈️ Otobüs Şoförünüz</span></h5>
             <div class="display-6 fw-bold text-light mb-2">{{ sofor.ad }} {{ sofor.soyad }}</div>
-            <p class="text-secondary fs-5 mb-0">Araç Plakası: <span class="badge bg-dark border border-secondary fs-5 text-warning">{{ sofor.arac_plaka }}</span></p>
+            <p class="text-secondary fs-5 mb-0"><span data-translate="vehicle_plate_label">Araç Plakası:</span> <span class="badge bg-dark border border-secondary fs-5 text-warning">{{ sofor.arac_plaka }}</span></p>
         </div>
     </div>
 </div>
@@ -99,11 +99,11 @@
         <div class="emergency-box premium-card">
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <div>
-                    <h5 class="text-danger fw-bold mb-1"><i class="fa-solid fa-triangle-exclamation"></i> Sürüş Tehlikesi mi Var?</h5>
-                    <p class="text-secondary small mb-0">Şoförün uykusuz, yorgun olduğunu düşünüyorsanız veya acil bir güvenlik riski varsa doğrudan merkez kontrol odasına alarm gönderebilirsiniz.</p>
+                    <h5 class="text-danger fw-bold mb-1"><i class="fa-solid fa-triangle-exclamation"></i> <span data-translate="yolcu_danger_title">Sürüş Tehlikesi mi Var?</span></h5>
+                    <p class="text-secondary small mb-0" data-translate="yolcu_danger_desc">Şoförün uykusuz, yorgun olduğunu düşünüyorsanız veya acil bir güvenlik riski varsa doğrudan merkez kontrol odasına alarm gönderebilirsiniz.</p>
                 </div>
                 <div>
-                    <button id="btnYolcuAcil" class="btn btn-danger fw-bold px-4 py-2"><i class="fa-solid fa-bell"></i> TEHLİKE BİLDİR</button>
+                    <button id="btnYolcuAcil" class="btn btn-danger fw-bold px-4 py-2"><i class="fa-solid fa-bell"></i> <span data-translate="btn_passenger_panic">TEHLİKE BİLDİR</span></button>
                 </div>
             </div>
             <div id="yolcuAcilSonuc" class="mt-2 fw-bold text-center"></div>
