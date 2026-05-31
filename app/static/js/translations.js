@@ -16,8 +16,11 @@ const translations = {
         "admin_desc": "Tüm filoyu canlı haritadan izlemek, zaman tüneli ses kayıtlarını ve risk alarmlarını takip etmek için giriş yapın.",
         "username_label": "Kullanıcı Adı",
         "username_placeholder": "Kullanıcı adınızı yazın...",
+        "email_label": "E-posta Adresi",
+        "email_placeholder": "E-posta adresiniz",
         "password_label": "Giriş Şifresi",
         "password_placeholder": "Şifrenizi yazın...",
+        "password_yolcu_placeholder": "Şifreniz",
         "btn_login_passenger": "👤 Yolcu Olarak Giriş Yap",
         "btn_login_driver": "🚌 Şoför Olarak Giriş Yap",
         "btn_login_admin": "🛡️ Merkez Sistemine Bağlan",
@@ -143,8 +146,11 @@ const translations = {
         "admin_desc": "Log in to monitor the fleet on a live map, view voice log timelines, and track safety fatigue alarms.",
         "username_label": "Username",
         "username_placeholder": "Enter your username...",
+        "email_label": "Email Address",
+        "email_placeholder": "Your email address...",
         "password_label": "Password",
         "password_placeholder": "Enter your password...",
+        "password_yolcu_placeholder": "Your password...",
         "btn_login_passenger": "👤 Log In as Passenger",
         "btn_login_driver": "🚌 Log In as Driver",
         "btn_login_admin": "🛡️ Connect to Central System",
@@ -255,7 +261,13 @@ const translations = {
 };
 
 // Global Translation Engine functions
-window.currentLanguage = localStorage.getItem('preferred_lang') || 'tr';
+let savedLang = 'tr';
+try {
+    savedLang = localStorage.getItem('preferred_lang') || 'tr';
+} catch (e) {
+    console.warn("localStorage is blocked or unavailable. Falling back to default 'tr'.");
+}
+window.currentLanguage = savedLang;
 
 window.getTrans = function(key) {
     if (translations[window.currentLanguage] && translations[window.currentLanguage][key]) {
@@ -291,7 +303,11 @@ window.applyTranslations = function() {
 
 window.changeLanguage = function(lang) {
     window.currentLanguage = lang;
-    localStorage.setItem('preferred_lang', lang);
+    try {
+        localStorage.setItem('preferred_lang', lang);
+    } catch (e) {
+        console.warn("localStorage write failed:", e);
+    }
     window.applyTranslations();
     
     // Dispatch custom event so templates can listen to language switch (e.g. Speech recognition)
