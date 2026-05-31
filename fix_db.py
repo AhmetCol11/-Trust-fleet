@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-db_path = 'sofor_guvenlik.db'
+db_path = os.environ.get("DATABASE_PATH", 'sofor_guvenlik.db')
 print(f"Checking database at: {os.path.abspath(db_path)}")
 
 conn = sqlite3.connect(db_path)

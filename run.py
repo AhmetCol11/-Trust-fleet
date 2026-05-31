@@ -13,7 +13,7 @@ def _sha256(text: str) -> str:
 
 def update_soforler_schema():
     """Eski DB şemasını yeni yapıya günceller (migration yardımcısı)."""
-    db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'sofor_guvenlik.db')
+    db_path = os.environ.get("DATABASE_PATH", os.path.join(os.path.abspath(os.path.dirname(__file__)), 'sofor_guvenlik.db'))
     if not os.path.exists(db_path):
         return
 

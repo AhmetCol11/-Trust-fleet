@@ -14,6 +14,7 @@
 
 import sqlite3  # Python'la birlikte gelen, kurulum gerektirmeyen hafif veritabanı kütüphanesi
 import hashlib  # Şifreleri düz metin saklamak güvensizdir; bu kütüphane şifreleri şifreler
+import os
 
 
 # ─────────────────────────────────────────────────────────────
@@ -22,7 +23,7 @@ import hashlib  # Şifreleri düz metin saklamak güvensizdir; bu kütüphane ş
 # Dosya adını değiştirmek istersen tek bir yerden değiştirirsin.
 # Büyük harfle yazılan değişkenler Python'da "sabit" anlamına gelir (convention).
 # ─────────────────────────────────────────────────────────────
-DB_DOSYASI = "sofor_guvenlik.db"
+DB_DOSYASI = os.environ.get("DATABASE_PATH", "sofor_guvenlik.db")
 
 
 # ─────────────────────────────────────────────────────────────
