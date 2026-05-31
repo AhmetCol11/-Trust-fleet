@@ -7,8 +7,13 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - .:/app
+      - db_data:/app/sofor_guvenlik.db
     environment:
       - FLASK_APP=run.py
       - FLASK_ENV=production
+      - SECRET_KEY=trustfleet-docker-secret-key-2026
     restart: always
+    command: gunicorn --workers 2 --bind 0.0.0.0:5000 "run:app"
+
+volumes:
+  db_data:

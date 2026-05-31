@@ -384,13 +384,13 @@
                         <span><i class="fa-solid fa-bell-exclamation text-danger me-2"></i> ÇOK ACİL BİLDİRİMLER</span>
                         <div class="d-flex align-items-center gap-2">
                             <span class="pulse-dot"></span>
-                            <span class="badge bg-danger text-light px-2 py-1 small fw-bold">{{ alarmlar | length }} UYARI</span>
+                            <span class="badge bg-danger text-light px-2 py-1 small fw-bold">{{ alarmlar_pagination.total }} UYARI</span>
                         </div>
                     </h4>
                     
-                    <p class="text-secondary small mb-3">Panik butonları veya akıllı asistan uykusuzluk dedektörü tarafından saptanan en kritik uyarılar anlık olarak aşağıda listelenir.</p>
+                    <p class="text-secondary small mb-3">Panik butonları veya akıllı asistan uykusuzluk dedektörü tarafından saptanan en kritik uyarılar anlık olarak aşağıda listelenir. Sayfa {{ alarmlar_pagination.page }}/{{ alarmlar_pagination.pages }}.</p>
                     
-                    <div class="custom-scroll pe-1" style="max-height: 460px; overflow-y: auto;">
+                    <div class="custom-scroll pe-1" style="max-height: 380px; overflow-y: auto;">
                         {% for a in alarmlar %}
                             <div class="card bg-dark bg-opacity-75 border border-danger border-opacity-50 rounded mb-3 shadow-lg" style="background-color: rgba(22, 24, 31, 0.7) !important; border-left: 5px solid #dc3545 !important;">
                                 <div class="card-body p-3">
@@ -417,6 +417,41 @@
                             </div>
                         {% endfor %}
                     </div>
+
+                    <!-- Alarm Sayfalama Navigasyonu -->
+                    {% if alarmlar_pagination.pages > 1 %}
+                    <nav aria-label="Alarm sayfalama" class="mt-3">
+                        <ul class="pagination pagination-sm justify-content-center mb-0">
+                            {% if alarmlar_pagination.has_prev %}
+                                <li class="page-item">
+                                    <a class="page-link bg-dark border-secondary text-danger" 
+                                       href="{{ url_for('admin.admin_panel', alarm_sayfa=alarmlar_pagination.prev_num) }}#driversPanel">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link bg-dark border-secondary text-secondary"><i class="fa-solid fa-chevron-left"></i></span></li>
+                            {% endif %}
+                            
+                            <li class="page-item disabled">
+                                <span class="page-link bg-dark border-secondary text-light fw-bold">
+                                    {{ alarmlar_pagination.page }} / {{ alarmlar_pagination.pages }}
+                                </span>
+                            </li>
+                            
+                            {% if alarmlar_pagination.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link bg-dark border-secondary text-danger" 
+                                       href="{{ url_for('admin.admin_panel', alarm_sayfa=alarmlar_pagination.next_num) }}#driversPanel">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled"><span class="page-link bg-dark border-secondary text-secondary"><i class="fa-solid fa-chevron-right"></i></span></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
                 </div>
             </div>
             

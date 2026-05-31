@@ -4,7 +4,7 @@ FROM python:3.11-slim
 # Çalışma dizinini ayarla
 WORKDIR /app
 
-# Gerekli sistem paketlerini kur (SQLite için gerekli derleyiciler vb.)
+# Gerekli sistem paketlerini kur
 RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
@@ -22,6 +22,7 @@ EXPOSE 5000
 # Çevre değişkenlerini ayarla
 ENV FLASK_APP=run.py
 ENV FLASK_ENV=production
+ENV PYTHONUNBUFFERED=1
 
-# Uygulamayı başlat
-CMD ["python", "run.py"]
+# Uygulamayı gunicorn ile başlat (docker-compose command ile override edilebilir)
+CMD ["gunicorn", "--workers", "2", "--bind", "0.0.0.0:5000", "run:app"]
