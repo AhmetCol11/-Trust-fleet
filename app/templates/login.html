@@ -16,27 +16,29 @@
         position: relative;
         overflow: hidden;
     }
-    
+
     /* Dynamic theme glow effects depending on active tab */
     .login-container.theme-yolcu {
         border-color: rgba(16, 185, 129, 0.35);
         box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 40px rgba(16, 185, 129, 0.15);
     }
+
     .login-container.theme-sofor {
         border-color: rgba(245, 158, 11, 0.35);
         box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 40px rgba(245, 158, 11, 0.15);
     }
+
     .login-container.theme-admin {
         border-color: rgba(6, 182, 212, 0.35);
         box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 40px rgba(6, 182, 212, 0.15);
     }
-    
+
     /* Brand Logo Box */
     .logo-outer-wrapper {
         text-align: center;
         margin-bottom: 25px;
     }
-    
+
     .logo-container {
         display: inline-flex;
         align-items: center;
@@ -48,31 +50,45 @@
         border: 1px solid rgba(255, 255, 255, 0.08);
         transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
     .theme-yolcu .logo-container {
         border-color: rgba(16, 185, 129, 0.4);
         background: rgba(16, 185, 129, 0.05);
         box-shadow: 0 0 25px rgba(16, 185, 129, 0.2);
     }
+
     .theme-sofor .logo-container {
         border-color: rgba(245, 158, 11, 0.4);
         background: rgba(245, 158, 11, 0.05);
         box-shadow: 0 0 25px rgba(245, 158, 11, 0.2);
     }
+
     .theme-admin .logo-container {
         border-color: rgba(6, 182, 212, 0.4);
         background: rgba(6, 182, 212, 0.05);
         box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
     }
-    
+
     .logo-icon {
         font-size: 2.4rem;
         transition: all 0.5s ease;
     }
-    .theme-yolcu .logo-icon { color: #10b981; filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6)); }
-    .theme-sofor .logo-icon { color: #f59e0b; filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.6)); }
-    .theme-admin .logo-icon { color: #06b6d4; filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.6)); }
-    
+
+    .theme-yolcu .logo-icon {
+        color: #10b981;
+        filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.6));
+    }
+
+    .theme-sofor .logo-icon {
+        color: #f59e0b;
+        filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.6));
+    }
+
+    .theme-admin .logo-icon {
+        color: #06b6d4;
+        filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.6));
+    }
+
     /* Segmented Navigation Tabs */
     .custom-nav-tabs {
         border: none;
@@ -84,11 +100,11 @@
         margin-bottom: 35px;
         border: 1px solid rgba(255, 255, 255, 0.04);
     }
-    
+
     .custom-nav-tabs .nav-item {
         flex: 1;
     }
-    
+
     .custom-nav-tabs .nav-link {
         width: 100%;
         text-align: center;
@@ -105,37 +121,37 @@
         justify-content: center;
         gap: 8px;
     }
-    
+
     .custom-nav-tabs .nav-link:hover {
         color: #fafafa !important;
         background: rgba(255, 255, 255, 0.04) !important;
     }
-    
+
     .custom-nav-tabs .nav-link.active[id="yolcu-tab"] {
         color: #10b981 !important;
         background: rgba(16, 185, 129, 0.12) !important;
         box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.25);
     }
-    
+
     .custom-nav-tabs .nav-link.active[id="sofor-tab"] {
         color: #f59e0b !important;
         background: rgba(245, 158, 11, 0.12) !important;
         box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.25);
     }
-    
+
     .custom-nav-tabs .nav-link.active[id="admin-tab"] {
         color: #06b6d4 !important;
         background: rgba(6, 182, 212, 0.12) !important;
         box-shadow: inset 0 0 0 1px rgba(6, 182, 212, 0.25);
     }
-    
+
     /* Input Groups */
     .input-icon-group {
         position: relative;
         display: flex;
         align-items: center;
     }
-    
+
     .input-icon-group i {
         position: absolute;
         left: 16px;
@@ -143,7 +159,7 @@
         transition: all 0.3s;
         z-index: 10;
     }
-    
+
     .input-icon-group .form-control {
         padding-left: 48px !important;
         height: 54px;
@@ -155,51 +171,57 @@
         font-size: 0.95rem;
         font-weight: 500;
     }
-    
+
     .input-icon-group .form-control::placeholder {
         color: rgba(255, 255, 255, 0.25);
     }
-    
+
     /* Color coding inputs */
     .theme-yolcu .input-icon-group .form-control:focus {
         border-color: #10b981 !important;
         box-shadow: 0 0 14px rgba(16, 185, 129, 0.25) !important;
         background-color: rgba(16, 185, 129, 0.02) !important;
     }
+
     .theme-yolcu .input-icon-group i {
         color: rgba(16, 185, 129, 0.45);
     }
-    .theme-yolcu .input-icon-group .form-control:focus ~ i,
-    .theme-yolcu .input-icon-group .form-control:focus + i {
+
+    .theme-yolcu .input-icon-group .form-control:focus~i,
+    .theme-yolcu .input-icon-group .form-control:focus+i {
         color: #10b981;
     }
-    
+
     .theme-sofor .input-icon-group .form-control:focus {
         border-color: #f59e0b !important;
         box-shadow: 0 0 14px rgba(245, 158, 11, 0.25) !important;
         background-color: rgba(245, 158, 11, 0.02) !important;
     }
+
     .theme-sofor .input-icon-group i {
         color: rgba(245, 158, 11, 0.45);
     }
-    .theme-sofor .input-icon-group .form-control:focus ~ i,
-    .theme-sofor .input-icon-group .form-control:focus + i {
+
+    .theme-sofor .input-icon-group .form-control:focus~i,
+    .theme-sofor .input-icon-group .form-control:focus+i {
         color: #f59e0b;
     }
-    
+
     .theme-admin .input-icon-group .form-control:focus {
         border-color: #06b6d4 !important;
         box-shadow: 0 0 14px rgba(6, 182, 212, 0.25) !important;
         background-color: rgba(6, 182, 212, 0.02) !important;
     }
+
     .theme-admin .input-icon-group i {
         color: rgba(6, 182, 212, 0.45);
     }
-    .theme-admin .input-icon-group .form-control:focus ~ i,
-    .theme-admin .input-icon-group .form-control:focus + i {
+
+    .theme-admin .input-icon-group .form-control:focus~i,
+    .theme-admin .input-icon-group .form-control:focus+i {
         color: #06b6d4;
     }
-    
+
     /* Submit Buttons */
     .btn-premium-submit {
         width: 100%;
@@ -216,46 +238,52 @@
         border: none;
         color: #fff;
     }
-    
+
     .btn-yolcu {
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         box-shadow: 0 5px 15px rgba(16, 185, 129, 0.25);
     }
+
     .btn-yolcu:hover {
         background: linear-gradient(135deg, #059669 0%, #047857 100%);
         transform: translateY(-2px);
         box-shadow: 0 8px 22px rgba(16, 185, 129, 0.35);
     }
+
     .btn-yolcu:active {
         transform: translateY(0);
     }
-    
+
     .btn-sofor {
         background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         box-shadow: 0 5px 15px rgba(245, 158, 11, 0.25);
     }
+
     .btn-sofor:hover {
         background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
         transform: translateY(-2px);
         box-shadow: 0 8px 22px rgba(245, 158, 11, 0.35);
     }
+
     .btn-sofor:active {
         transform: translateY(0);
     }
-    
+
     .btn-admin {
         background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
         box-shadow: 0 5px 15px rgba(6, 182, 212, 0.25);
     }
+
     .btn-admin:hover {
         background: linear-gradient(135deg, #0891b2 0%, #0369a1 100%);
         transform: translateY(-2px);
         box-shadow: 0 8px 22px rgba(6, 182, 212, 0.35);
     }
+
     .btn-admin:active {
         transform: translateY(0);
     }
-    
+
     /* Credentials box */
     .credentials-wrapper {
         max-width: 550px;
@@ -267,7 +295,7 @@
         overflow: hidden;
         transition: all 0.3s;
     }
-    
+
     .credentials-trigger {
         width: 100%;
         padding: 18px 24px;
@@ -281,36 +309,37 @@
         justify-content: space-between;
         transition: all 0.3s;
     }
-    
+
     .credentials-trigger:hover {
         background: rgba(255, 255, 255, 0.02);
         color: #fafafa;
     }
-    
+
     .credentials-trigger i.chevron-icon {
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
     .credentials-trigger:not(.collapsed) i.chevron-icon {
         transform: rotate(180deg);
     }
-    
+
     .credentials-body {
         padding: 24px;
         border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
-    
+
     .badge-custom-yolcu {
         background: rgba(16, 185, 129, 0.1);
         color: #10b981 !important;
         border: 1px solid rgba(16, 185, 129, 0.2);
     }
-    
+
     .badge-custom-sofor {
         background: rgba(245, 158, 11, 0.1);
         color: #f59e0b !important;
         border: 1px solid rgba(245, 158, 11, 0.2);
     }
-    
+
     .badge-custom-admin {
         background: rgba(6, 182, 212, 0.1);
         color: #06b6d4 !important;
@@ -330,34 +359,38 @@
     <!-- Sekmeler (Role tabs) -->
     <ul class="nav custom-nav-tabs" id="loginTabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="yolcu-tab" data-bs-toggle="tab" data-bs-target="#yolcu" type="button" role="tab"><i class="fa-solid fa-users"></i> Yolcu Girişi</button>
+            <button class="nav-link active" id="yolcu-tab" data-bs-toggle="tab" data-bs-target="#yolcu" type="button"
+                role="tab"><i class="fa-solid fa-users"></i> Yolcu Girişi</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="sofor-tab" data-bs-toggle="tab" data-bs-target="#sofor" type="button" role="tab"><i class="fa-solid fa-id-card"></i> 👨‍✈️ Şoför Girişi</button>
+            <button class="nav-link" id="sofor-tab" data-bs-toggle="tab" data-bs-target="#sofor" type="button"
+                role="tab"><i class="fa-solid fa-id-card"></i> 👨‍✈️ Şoför Girişi</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button" role="tab"><i class="fa-solid fa-building-shield"></i> Merkez</button>
+            <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin" type="button"
+                role="tab"><i class="fa-solid fa-building-shield"></i> Merkez</button>
         </li>
     </ul>
 
     <!-- Sekme İçerikleri -->
     <div class="tab-content" id="loginTabsContent">
-        
+
         <!-- YOLCU SEKMESİ -->
         <div class="tab-pane fade show active" id="yolcu" role="tabpanel">
             <div class="text-center mb-4">
                 <h4 class="fw-bold text-light mb-2">Yolcu Girişi</h4>
                 <p class="text-secondary small">Seyahatlerinizi değerlendirmek için üye girişi yapın.</p>
             </div>
-            
+
             <form action="" method="post" novalidate>
                 <input type="hidden" name="login_type" value="yolcu">
-                
+
                 <div class="mb-4">
                     <label class="form-label fw-semibold text-light mb-2">E-posta Adresi</label>
                     <div class="input-icon-group">
                         <i class="fa-solid fa-envelope"></i>
-                        <input type="email" name="yolcu_email" class="form-control" required placeholder="E-posta adresiniz">
+                        <input type="email" name="yolcu_email" class="form-control" required
+                            placeholder="E-posta adresiniz">
                     </div>
                 </div>
 
@@ -368,7 +401,7 @@
                         <input type="password" name="yolcu_sifre" class="form-control" required placeholder="Şifreniz">
                     </div>
                 </div>
-                
+
                 <div class="pt-2">
                     <button type="submit" class="btn-premium-submit btn-yolcu">
                         <i class="fa-solid fa-right-to-bracket"></i> Yolcu Girişi Yap
@@ -376,8 +409,10 @@
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-3 text-secondary small">
-                    <a href="{{ url_for('auth.yolcu_kayit') }}" class="text-success fw-bold text-decoration-none"><i class="fa-solid fa-user-plus me-1"></i> Yeni Üyelik Oluştur</a>
-                    <a href="{{ url_for('auth.yolcu_sifre_sifirla') }}" class="text-secondary text-decoration-none"><i class="fa-solid fa-circle-question me-1"></i> Şifremi Unuttum</a>
+                    <a href="{{ url_for('auth.yolcu_kayit') }}" class="text-success fw-bold text-decoration-none"><i
+                            class="fa-solid fa-user-plus me-1"></i> Yeni Üyelik Oluştur</a>
+                    <a href="{{ url_for('auth.yolcu_sifre_sifirla') }}" class="text-secondary text-decoration-none"><i
+                            class="fa-solid fa-circle-question me-1"></i> Şifremi Unuttum</a>
                 </div>
             </form>
         </div>
@@ -388,11 +423,11 @@
                 <h4 class="fw-bold text-light mb-2">Şoför Kontrol Paneli Girişi</h4>
                 <p class="text-secondary small">Güvenli sürüş doğrulaması ve asistan için oturum açın.</p>
             </div>
-            
+
             <form action="" method="post" novalidate>
                 {{ form.hidden_tag() }}
                 <input type="hidden" name="login_type" value="sofor">
-                
+
                 <div class="mb-4">
                     {{ form.kullanici_adi.label(class="form-label fw-semibold text-light mb-2") }}
                     <div class="input-icon-group">
@@ -400,7 +435,7 @@
                         {{ form.kullanici_adi(class="form-control", placeholder="Kullanıcı Adınız") }}
                     </div>
                 </div>
-                
+
                 <div class="mb-4">
                     {{ form.sifre.label(class="form-label fw-semibold text-light mb-2") }}
                     <div class="input-icon-group">
@@ -408,16 +443,18 @@
                         {{ form.sifre(class="form-control", placeholder="Şifreniz") }}
                     </div>
                 </div>
-                
+
                 <div class="pt-2">
                     <button type="submit" name="submit" value="Giriş Yap" class="btn-premium-submit btn-sofor">
                         <i class="fa-solid fa-key"></i> Şoför Paneline Giriş Yap
                     </button>
                 </div>
-                
+
                 <div class="d-flex justify-content-between align-items-center mt-3 text-secondary small">
-                    <a href="{{ url_for('auth.sofor_kayit') }}" class="text-warning fw-bold text-decoration-none"><i class="fa-solid fa-user-plus me-1"></i> Yeni Şoför Hesabı Oluştur</a>
-                    <a href="{{ url_for('auth.sofor_sifre_sifirla') }}" class="text-secondary text-decoration-none"><i class="fa-solid fa-circle-question me-1"></i> Şifremi Unuttum</a>
+                    <a href="{{ url_for('auth.sofor_kayit') }}" class="text-warning fw-bold text-decoration-none"><i
+                            class="fa-solid fa-user-plus me-1"></i> Yeni Şoför Hesabı Oluştur</a>
+                    <a href="{{ url_for('auth.sofor_sifre_sifirla') }}" class="text-secondary text-decoration-none"><i
+                            class="fa-solid fa-circle-question me-1"></i> Şifremi Unuttum</a>
                 </div>
             </form>
         </div>
@@ -428,18 +465,19 @@
                 <h4 class="fw-bold text-light mb-2">Merkez Yönetim Girişi</h4>
                 <p class="text-secondary small">Yetkili merkez personeli canlı izleme ve raporlama girişi.</p>
             </div>
-            
+
             <form action="" method="post">
                 <input type="hidden" name="login_type" value="admin">
-                
+
                 <div class="mb-4">
                     <label class="form-label fw-semibold text-light mb-2">Kullanıcı Adı</label>
                     <div class="input-icon-group">
                         <i class="fa-solid fa-user-shield"></i>
-                        <input type="text" name="kullanici_adi" class="form-control" required placeholder="Kullanıcı adı">
+                        <input type="text" name="kullanici_adi" class="form-control" required
+                            placeholder="Kullanıcı adı">
                     </div>
                 </div>
-                
+
                 <div class="mb-4">
                     <label class="form-label fw-semibold text-light mb-2">Şifre</label>
                     <div class="input-icon-group">
@@ -447,7 +485,7 @@
                         <input type="password" name="sifre" class="form-control" required placeholder="Şifreniz">
                     </div>
                 </div>
-                
+
                 <div class="pt-2">
                     <button type="submit" class="btn-premium-submit btn-admin">
                         <i class="fa-solid fa-shield-halved"></i> Merkez Sistemine Bağlan
@@ -461,7 +499,8 @@
 
 <!-- Collapsible Demo Credentials Box at Bottom -->
 <div class="credentials-wrapper">
-    <button class="credentials-trigger collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#demoCredentials" aria-expanded="false">
+    <button class="credentials-trigger collapsed" type="button" data-bs-toggle="collapse"
+        data-bs-target="#demoCredentials" aria-expanded="false">
         <span><i class="fa-solid fa-circle-info me-2 text-info"></i> Test & Demo Giriş Bilgileri</span>
         <i class="fa-solid fa-chevron-down chevron-icon"></i>
     </button>
@@ -472,7 +511,8 @@
                     <h6 class="fw-bold text-success mb-2"><i class="fa-solid fa-users"></i> Yolcu Girişi</h6>
                     <div class="small text-secondary mb-1">Kayıt Olabilir veya Kullanabilirsiniz:</div>
                     <div class="p-2 bg-dark rounded border border-secondary mb-2 small">
-                        <span class="text-secondary">E-posta:</span> <code class="text-success">yolcu@test.com</code><br>
+                        <span class="text-secondary">E-posta:</span> <code
+                            class="text-success">yolcu@test.com</code><br>
                         <span class="text-secondary">Şifre:</span> <code class="text-light">yolcu123</code>
                     </div>
                     <div class="small text-secondary mb-1">Giriş Sonrası Aktif Plakalar:</div>
@@ -481,14 +521,10 @@
                 </div>
                 <div class="col-md-4">
                     <h6 class="fw-bold text-warning mb-2"><i class="fa-solid fa-id-card"></i> Şoför Girişi</h6>
-                    <div class="small text-secondary mb-1">Örnek Şoför Hesapları:</div>
+                    <div class="small text-secondary mb-1">Örnek Şoför Hesabı:</div>
                     <div class="p-2 bg-dark rounded border border-secondary mb-2 small">
                         <span class="text-secondary">K.Adı:</span> <code class="text-warning">ahmet</code><br>
                         <span class="text-secondary">Şifre:</span> <code class="text-light">sifre123</code>
-                    </div>
-                    <div class="p-2 bg-dark rounded border border-secondary small">
-                        <span class="text-secondary">K.Adı:</span> <code class="text-warning">mehmet</code><br>
-                        <span class="text-secondary">Şifre:</span> <code class="text-light">sifre456</code>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -508,37 +544,37 @@
 
 {% block scripts %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const loginCard = document.getElementById('loginCard');
-    const tabButtons = document.querySelectorAll('#loginTabs button');
-    
-    // Function to dynamically update the login card's glow and border based on tab ID
-    function updateTheme(tabId) {
-        // Remove all previous theme classes
-        loginCard.classList.remove('theme-yolcu', 'theme-sofor', 'theme-admin');
-        
-        // Add matching role class
-        if (tabId === 'yolcu-tab') {
-            loginCard.classList.add('theme-yolcu');
-        } else if (tabId === 'sofor-tab') {
-            loginCard.classList.add('theme-sofor');
-        } else if (tabId === 'admin-tab') {
-            loginCard.classList.add('theme-admin');
+    document.addEventListener('DOMContentLoaded', function () {
+        const loginCard = document.getElementById('loginCard');
+        const tabButtons = document.querySelectorAll('#loginTabs button');
+
+        // Function to dynamically update the login card's glow and border based on tab ID
+        function updateTheme(tabId) {
+            // Remove all previous theme classes
+            loginCard.classList.remove('theme-yolcu', 'theme-sofor', 'theme-admin');
+
+            // Add matching role class
+            if (tabId === 'yolcu-tab') {
+                loginCard.classList.add('theme-yolcu');
+            } else if (tabId === 'sofor-tab') {
+                loginCard.classList.add('theme-sofor');
+            } else if (tabId === 'admin-tab') {
+                loginCard.classList.add('theme-admin');
+            }
         }
-    }
-    
-    // Establish initial theme from the tab that starts active
-    const activeTab = document.querySelector('#loginTabs button.active');
-    if (activeTab) {
-        updateTheme(activeTab.id);
-    }
-    
-    // Set dynamic listeners for tab switch transitions
-    tabButtons.forEach(btn => {
-        btn.addEventListener('shown.bs.tab', function(event) {
-            updateTheme(event.target.id);
+
+        // Establish initial theme from the tab that starts active
+        const activeTab = document.querySelector('#loginTabs button.active');
+        if (activeTab) {
+            updateTheme(activeTab.id);
+        }
+
+        // Set dynamic listeners for tab switch transitions
+        tabButtons.forEach(btn => {
+            btn.addEventListener('shown.bs.tab', function (event) {
+                updateTheme(event.target.id);
+            });
         });
     });
-});
 </script>
 {% endblock %}
